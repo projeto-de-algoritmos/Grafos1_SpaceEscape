@@ -1,4 +1,4 @@
-# Space Escape
+# Zombie Escape
 
 **Número da Lista**: 1<br>
 **Conteúdo da Disciplina**: Grafos 1<br>
@@ -10,7 +10,7 @@
 | 17/0109208  |  Luis Henrique Pereira Taira |
 
 ## Sobre 
-Space Escape consiste em um jogo em que o jogador deve alcançar o fim do estágio antes que inimigos consigam alcançá-lo.
+Zombie Escape consiste em um jogo em que o jogador deve alcançar o fim do estágio antes que inimigos consigam alcançá-lo.
 
 ## Screenshots
 Adicione 3 ou mais screenshots do projeto em funcionamento.
