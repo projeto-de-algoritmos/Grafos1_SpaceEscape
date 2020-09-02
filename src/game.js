@@ -39,7 +39,7 @@ var Bullet = new Phaser.Class({
     // Fires a bullet from the player to the sight
     fire: function (shooter, target)
     {
-        this.setPosition(shooter.x, shooter.y); // Initial position
+        this.setPosition(shooter.get_x(), shooter.get_y()); // Initial position
         this.direction = Math.atan( (target.x-this.x) / (target.y-this.y));
 
         // Calculate X and y velocity of bullet to moves it from shooter to target
@@ -54,7 +54,7 @@ var Bullet = new Phaser.Class({
             this.ySpeed = -this.speed*Math.cos(this.direction);
         }
 
-        this.rotation = shooter.rotation; // angle bullet with shooters rotation
+        this.rotation = shooter.get_rotation(); // angle bullet with shooters rotation
         this.born = 0; // Time since new bullet spawned
     },
 
@@ -86,51 +86,12 @@ function create() {
     playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
 
     var map = this.add.image(0, 0, 'map');
-    player = this.physics.add.sprite(640, 360, 'gun');
+    // player = this.physics.add.sprite(640, 360, 'gun');
+    player = new Player(this)
     sight = this.physics.add.sprite(800, 700, 'sight').setDisplaySize(64, 64);
 
     map.setOrigin(0, 0).setDisplaySize(1280, 720);
-    player.setOrigin(0.5, 0.5).setDisplaySize(64, 64).setCollideWorldBounds(true).setDrag(500, 500);
     sight.setDisplaySize(64, 64).setCollideWorldBounds(true);
-
-    moveKeys = this.input.keyboard.addKeys({
-        'up': Phaser.Input.Keyboard.KeyCodes.W,
-        'down': Phaser.Input.Keyboard.KeyCodes.S,
-        'left': Phaser.Input.Keyboard.KeyCodes.A,
-        'right': Phaser.Input.Keyboard.KeyCodes.D
-    });
-
-    // Enables movement of player with WASD keys
-    this.input.keyboard.on('keydown_W', function (event) {
-        player.setAccelerationY(-800);
-    });
-    this.input.keyboard.on('keydown_S', function (event) {
-        player.setAccelerationY(800);
-    });
-    this.input.keyboard.on('keydown_A', function (event) {
-        player.setAccelerationX(-800);
-    });
-    this.input.keyboard.on('keydown_D', function (event) {
-        player.setAccelerationX(800);
-    });
-
-    // Stops player acceleration on uppress of WASD keys
-    this.input.keyboard.on('keyup_W', function (event) {
-        if (moveKeys['down'].isUp)
-            player.setAccelerationY(0);
-    });
-    this.input.keyboard.on('keyup_S', function (event) {
-        if (moveKeys['up'].isUp)
-            player.setAccelerationY(0);
-    });
-    this.input.keyboard.on('keyup_A', function (event) {
-        if (moveKeys['right'].isUp)
-            player.setAccelerationX(0);
-    });
-    this.input.keyboard.on('keyup_D', function (event) {
-        if (moveKeys['left'].isUp)
-            player.setAccelerationX(0);
-    });
 
     game.canvas.addEventListener('mousedown', function () {
         game.input.mouse.requestPointerLock();
@@ -145,7 +106,7 @@ function create() {
     }, this);
 
     this.input.on('pointerdown', function (pointer, time, lastFired) {
-        if (player.active === false)
+        if (player.get_active() === false)
             return;
 
         // Get bullet from bullets group
@@ -203,12 +164,10 @@ function constrainsight(sight)
 }
 
 function update() {
-    player.rotation = Phaser.Math.Angle.Between(player.x, player.y, sight.x, sight.y);
+    // console.log(Phaser.Math.Angle.Between(player.get_x(), player.get_y(), sight.x, sight.y))
+    player.setRotation(Phaser.Math.Angle.Between(player.get_x(), player.get_y(), sight.x, sight.y));
+    player.update()
 
-    // Rotates enemy to face towards player
-    // enemy.rotation = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
-
-    //Make sight move with player
-    sight.body.velocity.x = player.body.velocity.x;
-    sight.body.velocity.y = player.body.velocity.y;
+    sight.body.velocity.x = player.get_velocity_x();
+    sight.body.velocity.y = player.get_velocity_y();
 }
