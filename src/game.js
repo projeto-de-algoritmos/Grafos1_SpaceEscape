@@ -1,7 +1,7 @@
 var config = {
     type: Phaser.AUTO,
-    width: 1200,
-    height: 1200,
+    width: 1280,
+    height: 720,
     physics: {
         default: 'arcade',
         arcade: {
@@ -18,8 +18,12 @@ var config = {
 
 var game = new Phaser.Game(config);
 
-function preload() {}
+function preload() {
+	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
+}
 
-function create() {}
+function create() {
+	var test_enemy = new Enemy(this, 200, 300);	
+}
 
 function update() {}
