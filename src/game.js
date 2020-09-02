@@ -39,11 +39,11 @@ var Bullet = new Phaser.Class({
     // Fires a bullet from the player to the sight
     fire: function (shooter, target)
     {
-        this.setPosition(shooter.get_x(), shooter.get_y()); // Initial position
-        this.direction = Math.atan( (target.x-this.x) / (target.y-this.y));
+        this.setPosition(shooter.getEntity().x, shooter.getEntity().y); // Initial position
+        this.direction = Math.atan( (target.getEntity().x-this.x) / (target.getEntity().y-this.y));
 
         // Calculate X and y velocity of bullet to moves it from shooter to target
-        if (target.y >= this.y)
+        if (target.getEntity().y >= this.y)
         {
             this.xSpeed = this.speed*Math.sin(this.direction);
             this.ySpeed = this.speed*Math.cos(this.direction);
@@ -54,7 +54,7 @@ var Bullet = new Phaser.Class({
             this.ySpeed = -this.speed*Math.cos(this.direction);
         }
 
-        this.rotation = shooter.get_rotation(); // angle bullet with shooters rotation
+        this.rotation = shooter.getEntity().rotation; // angle bullet with shooters rotation
         this.born = 0; // Time since new bullet spawned
     },
 
@@ -88,10 +88,11 @@ function create() {
     var map = this.add.image(0, 0, 'map');
     // player = this.physics.add.sprite(640, 360, 'gun');
     player = new Player(this)
-    sight = this.physics.add.sprite(800, 700, 'sight').setDisplaySize(64, 64);
+    sight = new Sight(this)
+    // sight = this.physics.add.sprite(800, 700, 'sight').setDisplaySize(64, 64);
 
     map.setOrigin(0, 0).setDisplaySize(1280, 720);
-    sight.setDisplaySize(64, 64).setCollideWorldBounds(true);
+    // sight.setDisplaySize(64, 64).setCollideWorldBounds(true);
 
     game.canvas.addEventListener('mousedown', function () {
         game.input.mouse.requestPointerLock();
@@ -100,13 +101,13 @@ function create() {
     this.input.on('pointermove', function (pointer) {
         if (this.input.mouse.locked)
         {
-            sight.x += pointer.movementX;
-            sight.y += pointer.movementY;
+            sight.getEntity().x += pointer.movementX;
+            sight.getEntity().y += pointer.movementY;
         }
     }, this);
 
     this.input.on('pointerdown', function (pointer, time, lastFired) {
-        if (player.get_active() === false)
+        if (player.getEntity().active === false)
             return;
 
         // Get bullet from bullets group
@@ -148,26 +149,28 @@ function constrainVelocity(sprite, maxVelocity)
 // Ensures sight does not move offscreen
 function constrainsight(sight)
 {
-    var distX = sight.x-player.x; // X distance between player & sight
-    var distY = sight.y-player.y; // Y distance between player & sight
+    var distX = sight.getEntity().x-player.getEntity().x; // X distance between player & sight
+    var distY = sight.getEntity().y-player.getEntity().y; // Y distance between player & sight
 
     // Ensures sight cannot be moved offscreen (player follow)
     if (distX > 800)
-        sight.x = player.x+800;
+        sight.getEntity().x = player.getEntity().x+800;
     else if (distX < -800)
-        sight.x = player.x-800;
+        sight.getEntity().x = player.getEntity().x-800;
 
     if (distY > 600)
-        sight.y = player.y+600;
+        sight.getEntity().y = player.getEntity().y+600;
     else if (distY < -600)
-        sight.y = player.y-600;
+        sight.getEntity().y = player.getEntity().y-600;
 }
 
 function update() {
     // console.log(Phaser.Math.Angle.Between(player.get_x(), player.get_y(), sight.x, sight.y))
-    player.setRotation(Phaser.Math.Angle.Between(player.get_x(), player.get_y(), sight.x, sight.y));
+    player.setRotation(Phaser.Math.Angle.Between(player.getEntity().x, player.getEntity().y, sight.getEntity().x, sight.getEntity().y));
     player.update()
 
-    sight.body.velocity.x = player.get_velocity_x();
-    sight.body.velocity.y = player.get_velocity_y();
+    sight.setVelocityX(player.getEntity().body.velocity.y)
+    sight.setVelocityY(player.getEntity().body.velocity.y)
+    // sight.body.velocity.x = player.getEntity().body.velocity.x;
+    // sight.body.velocity.y = player.getEntity().body.velocity.y;
 }

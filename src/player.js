@@ -49,32 +49,11 @@ class Player {
 
     update() { }
 
-    get_rotation() {
-        return this.entity.rotation;
+    getEntity() {
+        return this.entity;
     }
 
     setRotation(rotation) {
-        // console.log(rotation);
         this.entity.rotation = rotation;
-    }
-
-    get_x() {
-        return this.entity.x;
-    }
-
-    get_y() {
-        return this.entity.y;
-    }
-
-    get_velocity_y() {
-        return this.entity.body.velocity.y;
-    }
-    
-    get_velocity_x() {
-        return this.entity.body.velocity.x;
-    }
-
-    get_active() {
-        return this.entity.active;
     }
 }
