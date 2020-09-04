@@ -17,6 +17,10 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+var test_enemy;
+var dummy_target;
+var layer2;
+var layer3;
 
 var Bullet = new Phaser.Class({
 
@@ -74,35 +78,55 @@ var Bullet = new Phaser.Class({
 });
 
 function preload() {
-    this.load.image('map', 'assets/map.jpg');
+	// this.load.image('map', 'assets/map.jpg');
+	this.load.tilemapTiledJSON('map', 'assets/test_tile_map.json');
+	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
+	this.load.image('spr_target', 'assets/spr_target.png');
+	this.load.image('terrain', 'assets/terrain.png');
     this.load.image('bullet', 'assets/bullet.png');
-    this.load.image('gun', 'assets/gun.jpg');
-    this.load.image('sight', 'assets/sight.jpg');
+    this.load.image('dude', 'assets/dude.png');
+    this.load.image('sight', 'assets/sight.png');
 }
 
 function create() {
-    this.physics.world.setBounds(0, 0, 1280, 720);
+	// this.physics.world.setBounds(0, 0, 1280, 720);
+	// var map = this.add.image(0, 0, 'map');
+	var map = this.make.tilemap({ key: 'map' });
+	var tileset = map.addTilesetImage('terrain');
+	var layer = map.createStaticLayer('Background', tileset, 0, 0);
+	layer2 = map.createStaticLayer('Borders', tileset, 0, 0);
+	layer3 = map.createStaticLayer('Plataforms', tileset, 0, 0);
+	layer3.setCollisionBetween(0, 999);
+	layer2.setCollisionBetween(0,999);
+	
+	player = new Player(this, 'dude')
+	sight = new Sight(this)
+	
+	playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
+	// dummy_target = this.add.image(this.input.activePointer.x, this.input.activePointer.y, 'spr_target');
+	test_enemy = new Enemy(this, 200, 300, player.getEntity(), layer3);
+	
+	// map.setOrigin(0, 0).setDisplaySize(1280, 720);
+	
+	this.physics.add.collider(test_enemy.entity, layer3);
+	this.physics.add.collider(test_enemy.entity, layer2);
 
-    playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
-
-    var map = this.add.image(0, 0, 'map');
-    // player = this.physics.add.sprite(640, 360, 'gun');
-    player = new Player(this)
-    sight = new Sight(this)
-    // sight = this.physics.add.sprite(800, 700, 'sight').setDisplaySize(64, 64);
-
-    map.setOrigin(0, 0).setDisplaySize(1280, 720);
+	this.physics.add.collider(player.getEntity(), layer3);
+	this.physics.add.collider(player.getEntity(), layer2);
+	
+	
     // sight.setDisplaySize(64, 64).setCollideWorldBounds(true);
-
+	
     game.canvas.addEventListener('mousedown', function () {
-        game.input.mouse.requestPointerLock();
+		game.input.mouse.requestPointerLock();
     });
+	
+    this.input.on('pointermove', function (e) {
 
-    this.input.on('pointermove', function (pointer) {
         if (this.input.mouse.locked)
         {
-            sight.getEntity().x += pointer.movementX;
-            sight.getEntity().y += pointer.movementY;
+            sight.getEntity().x += e.movementX;
+            sight.getEntity().y += e.movementY;
         }
     }, this);
 
@@ -121,9 +145,6 @@ function create() {
     }, this);
 
     // Pointer lock will only work after mousedown
-    game.canvas.addEventListener('mousedown', function () {
-        game.input.mouse.requestPointerLock();
-    });
 }
 
 function constrainVelocity(sprite, maxVelocity)
@@ -173,4 +194,5 @@ function update() {
     sight.setVelocityY(player.getEntity().body.velocity.y)
     // sight.body.velocity.x = player.getEntity().body.velocity.x;
     // sight.body.velocity.y = player.getEntity().body.velocity.y;
+	test_enemy.update();
 }
