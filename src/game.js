@@ -19,8 +19,6 @@ var config = {
 var game = new Phaser.Game(config);
 var test_enemy;
 var dummy_target;
-var layer2;
-var layer3;
 var test_stage;
 
 var Bullet = new Phaser.Class({
@@ -92,30 +90,20 @@ function preload() {
 function create() {
 	// this.physics.world.setBounds(0, 0, 1280, 720);
 	// var map = this.add.image(0, 0, 'map');
-	var map = this.make.tilemap({ key: 'map' });
-	var tileset = map.addTilesetImage('terrain');
 	test_stage = new Stage(this, 'map');
-	var layer = map.createStaticLayer('Background', tileset, 0, 0);
-	layer2 = map.createStaticLayer('Borders', tileset, 0, 0);
-	layer3 = map.createStaticLayer('Plataforms', tileset, 0, 0);
-	layer3.setCollisionBetween(0, 999);
-	layer2.setCollisionBetween(0,999);
 	
 	player = new Player(this, 'dude')
 	sight = new Sight(this)
 	
 	playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
 	// dummy_target = this.add.image(this.input.activePointer.x, this.input.activePointer.y, 'spr_target');
-	test_enemy = new Enemy(this, 200, 300, player.getEntity(), layer3);
+	test_enemy = new Enemy(this, 200, 300, player.getEntity(), test_stage.wall_layer);
 	
 	// map.setOrigin(0, 0).setDisplaySize(1280, 720);
 	
-	this.physics.add.collider(test_enemy.entity, layer3);
-	this.physics.add.collider(test_enemy.entity, layer2);
+	this.physics.add.collider(test_enemy.entity, test_stage.wall_layer);
 
-	this.physics.add.collider(player.getEntity(), layer3);
-	this.physics.add.collider(player.getEntity(), layer2);
-	
+	this.physics.add.collider(player.getEntity(), test_stage.wall_layer);
 	
     // sight.setDisplaySize(64, 64).setCollideWorldBounds(true);
 	
