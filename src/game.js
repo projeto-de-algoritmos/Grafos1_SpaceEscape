@@ -21,6 +21,7 @@ var test_enemy;
 var dummy_target;
 var layer2;
 var layer3;
+var test_stage;
 
 var Bullet = new Phaser.Class({
 
@@ -93,6 +94,7 @@ function create() {
 	// var map = this.add.image(0, 0, 'map');
 	var map = this.make.tilemap({ key: 'map' });
 	var tileset = map.addTilesetImage('terrain');
+	test_stage = new Stage(this, 'map');
 	var layer = map.createStaticLayer('Background', tileset, 0, 0);
 	layer2 = map.createStaticLayer('Borders', tileset, 0, 0);
 	layer3 = map.createStaticLayer('Plataforms', tileset, 0, 0);

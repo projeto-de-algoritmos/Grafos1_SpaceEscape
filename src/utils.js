@@ -9,12 +9,16 @@ class Graph {
 		this.adjList = new Map();
 	}
 	
-	addVertex(v) {
-		this.adjList.set(v, []);
+	addVertex(v, info = {}) {
+		this.adjList.set(v, {...info, edges: []});
 	}
 	
 	addEdge(v1, v2) {
-		this.adjList.get(v1).push(v2);
-		this.adjList.get(v2).push(v1);
+		this.adjList.get(v1).edges.push(v2);
+		this.adjList.get(v2).edges.push(v1);
+	}
+	
+	getVertex(v) {
+		return this.adjList.get(v);
 	}
 }
