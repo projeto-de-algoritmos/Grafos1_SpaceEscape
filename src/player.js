@@ -1,4 +1,5 @@
 class Player {
+    weapon = null
     constructor(game, image, x=0, y=0) {
         this.game = game
         this.entity = this.game.physics.add.sprite(640, 360, image);
@@ -13,7 +14,6 @@ class Player {
             'right': Phaser.Input.Keyboard.KeyCodes.D
         });
     
-        // Enables movement of player with WASD keys
         this.game.input.keyboard.on('keydown_W', function (event) {7
             entity.setAccelerationY(-800);
         });
@@ -27,7 +27,6 @@ class Player {
             entity.setAccelerationX(800);
         });
     
-        // Stops player acceleration on uppress of WASD keys
         this.game.input.keyboard.on('keyup_W', function (event) {
             if (moveKeys['down'].isUp)
                 entity.setAccelerationY(0);
@@ -44,7 +43,20 @@ class Player {
             if (moveKeys['left'].isUp)
                 entity.setAccelerationX(0);
         });
+    }
 
+    shoot(player, sight) {
+        if(this.weapon) {
+            return this.weapon.fire(player, sight)
+        }
+    }
+
+    getWeapon() {
+        return this.weapon;
+    }
+
+    pickupWeapon(weapon) {
+        this.weapon = weapon;
     }
 
     update() { }
