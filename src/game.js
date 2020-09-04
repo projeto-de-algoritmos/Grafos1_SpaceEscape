@@ -32,6 +32,14 @@ function preload() {
     this.load.image('sight', 'assets/sight.png');
 }
 
+function spawnEnemy(scene) {
+    test_enemy = new Enemy(scene, 200, 300, player.getEntity(), layer3);
+	
+	scene.physics.add.collider(test_enemy.getEntity(), layer3);
+	scene.physics.add.collider(test_enemy.getEntity(), layer2);
+    return test_enemy
+}
+
 function create() {
 	var map = this.make.tilemap({ key: 'map' });
 	var tileset = map.addTilesetImage('terrain');
@@ -45,12 +53,9 @@ function create() {
 	sight = new Sight(this)
 
 	var camera = this.cameras.main;
-	camera.startFollow(player.getEntity())
-	
-	test_enemy = new Enemy(this, 200, 300, player.getEntity(), layer3);
-	
-	this.physics.add.collider(test_enemy.getEntity(), layer3);
-	this.physics.add.collider(test_enemy.getEntity(), layer2);
+    camera.startFollow(player.getEntity())
+    
+	test_enemy = spawnEnemy(this)
 	
 	this.physics.add.collider(player.getEntity(), layer3);
 	this.physics.add.collider(player.getEntity(), layer2);
@@ -80,7 +85,7 @@ function create() {
         if (bullet.getEntity())
         {
             bullet.fire(player, sight);
-            this.physics.add.collider(test_enemy.getEntity(), bullet.getEntity(), bullet.enemyHitCallback);
+            this.physics.add.collider(test_enemy.getEntity(), bullet.getEntity(), () => test_enemy.getHit(test_enemy.getEntity()));
         }
     }, this);
 
@@ -128,5 +133,9 @@ function update() {
 
     sight.setVelocityX(player.getEntity().body.velocity.x)
     sight.setVelocityY(player.getEntity().body.velocity.y)
-	test_enemy.update();
+    if(test_enemy.isAlive()) {
+        test_enemy.update();
+    } else {
+        test_enemy = spawnEnemy(this)
+    }
 }

@@ -1,3 +1,4 @@
+// health = 5
 class Enemy {
 	constructor(game, x = 0, y = 0, player = null, collision_layer = null) {
 		this.entity = game.physics.add.sprite(x, y, 'spr_enemy');
@@ -5,7 +6,18 @@ class Enemy {
 		this.target = player;
 		this.game = game;
 		this.collision_layer = collision_layer;
+		this.health = 5
 	}
+	
+	getHit(entity) {
+		this.health -= 1;
+		console.log('alive', this.health)
+		if(this.health <= 0 ) {
+			console.log('dead')
+			entity.destroy()
+		}
+	}
+
 	
 	followTarget() {
 		this.entity.rotation = Phaser.Math.Angle.Between(this.entity.x, this.entity.y, this.target.x, this.target.y);
@@ -40,5 +52,12 @@ class Enemy {
 
 	getEntity() {
 		return this.entity;
+	}
+
+	isAlive() {
+		if(this.health > 0) {
+			return true
+		}
+		return false
 	}
 }
