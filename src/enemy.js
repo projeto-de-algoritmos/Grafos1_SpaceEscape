@@ -37,4 +37,8 @@ class Enemy {
 				break;
 		}
 	}
+
+	getEntity() {
+		return this.entity;
+	}
 }

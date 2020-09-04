@@ -46,8 +46,8 @@ function create() {
 	
 	test_enemy = new Enemy(this, 200, 300, player.getEntity(), layer3);
 	
-	this.physics.add.collider(test_enemy.entity, layer3);
-	this.physics.add.collider(test_enemy.entity, layer2);
+	this.physics.add.collider(test_enemy.getEntity(), layer3);
+	this.physics.add.collider(test_enemy.getEntity(), layer2);
 	
 	this.physics.add.collider(player.getEntity(), layer3);
 	this.physics.add.collider(player.getEntity(), layer2);
@@ -72,12 +72,12 @@ function create() {
 			return;
 			
 		var bullet = new Bullet({scene: this})
-		playerBullets.add(bullet)
+		playerBullets.add(bullet.getEntity())
 
-        if (bullet)
+        if (bullet.getEntity())
         {
             bullet.fire(player, sight);
-            this.physics.add.collider(test_enemy, bullet, bullet.enemyHitCallback());
+            this.physics.add.collider(test_enemy.getEntity(), bullet.getEntity(), bullet.enemyHitCallback);
         }
     }, this);
 
@@ -123,7 +123,7 @@ function update() {
     player.setRotation(Phaser.Math.Angle.Between(player.getEntity().x, player.getEntity().y, sight.getEntity().x, sight.getEntity().y));
     player.update()
 
-    sight.setVelocityX(player.getEntity().body.velocity.y)
+    sight.setVelocityX(player.getEntity().body.velocity.x)
     sight.setVelocityY(player.getEntity().body.velocity.y)
 	test_enemy.update();
 }

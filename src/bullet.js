@@ -1,32 +1,32 @@
 class Bullet extends Phaser.GameObjects.Image {
     constructor(config) {
         super(config.scene, config.x, config.y, 'bullet');
-        config.scene.add.existing(this).setDisplaySize(16, 8);
+        this.entity = config.scene.add.existing(this).setDisplaySize(16, 8);
 
-        this.speed = 1;
-        this.born = 0;
-        this.direction = 0;
-        this.xSpeed = 0;
-        this.ySpeed = 0;
-        this.setSize(12, 12, true);
+        this.entity.speed = 1;
+        this.entity.born = 0;
+        this.entity.direction = 0;
+        this.entity.xSpeed = 0;
+        this.entity.ySpeed = 0;
+        this.entity.setSize(12, 12, true);
     }
 
     fire(shooter, target) {
-        this.setPosition(shooter.getEntity().x, shooter.getEntity().y); // Initial position
-        this.direction = Math.atan((target.getEntity().x - this.x) / (target.getEntity().y - this.y));
+        this.entity.setPosition(shooter.getEntity().x, shooter.getEntity().y); // Initial position
+        this.entity.direction = Math.atan((target.getEntity().x - this.entity.x) / (target.getEntity().y - this.entity.y));
 
         // Calculate X and y velocity of bullet to moves it from shooter to target
-        if (target.getEntity().y >= this.y) {
-            this.xSpeed = this.speed * Math.sin(this.direction);
-            this.ySpeed = this.speed * Math.cos(this.direction);
+        if (target.getEntity().y >= this.entity.y) {
+            this.entity.xSpeed = this.entity.speed * Math.sin(this.entity.direction);
+            this.entity.ySpeed = this.entity.speed * Math.cos(this.entity.direction);
         }
         else {
-            this.xSpeed = -this.speed * Math.sin(this.direction);
-            this.ySpeed = -this.speed * Math.cos(this.direction);
+            this.entity.xSpeed = -this.entity.speed * Math.sin(this.entity.direction);
+            this.entity.ySpeed = -this.entity.speed * Math.cos(this.entity.direction);
         }
 
-        this.rotation = shooter.getEntity().rotation; // angle bullet with shooters rotation
-        this.born = 0; // Time since new bullet spawned
+        this.entity.rotation = shooter.getEntity().rotation; // angle bullet with shooters rotation
+        this.entity.born = 0; // Time since new bullet spawned
     }
 
     enemyHitCallback(enemyHit, bulletHit) {
@@ -48,12 +48,15 @@ class Bullet extends Phaser.GameObjects.Image {
     }
 
     update(time, delta) {
-        this.x += this.xSpeed * delta;
-        this.y += this.ySpeed * delta;
-        this.born += delta;
-        if (this.born > 1800) {
-            this.setActive(false);
-            this.setVisible(false);
+        this.entity.x += this.entity.xSpeed * delta;
+        this.entity.y += this.entity.ySpeed * delta;
+        this.entity.born += delta;
+        if (this.entity.born > 1800) {
+            this.entity.setActive(false);
+            this.entity.setVisible(false);
         }
+    }
+    getEntity() {
+        return this.entity;
     }
 }
