@@ -43,6 +43,9 @@ function create() {
 	
 	player = new Player(this, 'dude')
 	sight = new Sight(this)
+
+	var camera = this.cameras.main;
+	camera.startFollow(player.getEntity())
 	
 	test_enemy = new Enemy(this, 200, 300, player.getEntity(), layer3);
 	
