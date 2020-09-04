@@ -49,7 +49,8 @@ function create() {
 	layer3.setCollisionBetween(0, 999);
 	layer2.setCollisionBetween(0,999);
 	
-	player = new Player(this, 'dude')
+    player = new Player(this, 'dude')
+    player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
 
 	var camera = this.cameras.main;
@@ -73,19 +74,18 @@ function create() {
         }
 	}, this);
 	
-	playerBullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
-	
     this.input.on('pointerdown', function (pointer, time, lastFired) {
         if (player.getEntity().active === false)
-			return;
+            return;
+        var bullet = null;
+        if(player.getWeapon()) {
+            bullet = player.shoot(player, sight)
+        }
 			
-		var bullet = new Bullet({scene: this})
-		playerBullets.add(bullet.getEntity())
-
-        if (bullet.getEntity())
+        if (bullet)
         {
             bullet.fire(player, sight);
-            this.physics.add.collider(test_enemy.getEntity(), bullet.getEntity(), () => test_enemy.getHit(test_enemy.getEntity()));
+            this.physics.add.collider(test_enemy.getEntity(), bullet, () => test_enemy.getHit(test_enemy.getEntity()));
         }
     }, this);
 
