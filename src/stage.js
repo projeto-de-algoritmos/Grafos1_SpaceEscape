@@ -4,7 +4,7 @@ class Stage {
 		this.tileset = this.map.addTilesetImage(tileset);
 		this.background_layer = this.map.createStaticLayer('Background', tileset, 0, 0);
 		this.wall_layer = this.map.createStaticLayer('Walls', tileset, 0, 0);
-		this.floor_layer = this.map.createStaticLayer('Plataforms', tileset, 0, 0);
+		this.floor_layer = this.map.createStaticLayer('Floor', tileset, 0, 0);
 		this.generateFloorGraph();
 	}
 	
