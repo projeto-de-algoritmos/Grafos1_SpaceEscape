@@ -1,4 +1,3 @@
-// health = 5
 class Enemy {
 	constructor(game, x = 0, y = 0, player = null, collision_layer = null) {
 		this.entity = game.physics.add.sprite(x, y, 'spr_enemy');
@@ -17,7 +16,6 @@ class Enemy {
 			entity.destroy()
 		}
 	}
-
 	
 	followTarget() {
 		this.entity.rotation = Phaser.Math.Angle.Between(this.entity.x, this.entity.y, this.target.x, this.target.y);

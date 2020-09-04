@@ -19,8 +19,7 @@ var config = {
 var game = new Phaser.Game(config);
 var test_enemy;
 var dummy_target;
-var layer2;
-var layer3;
+var test_stage;
 
 function preload() {
 	this.load.tilemapTiledJSON('map', 'assets/test_tile_map.json');
@@ -33,22 +32,14 @@ function preload() {
 }
 
 function spawnEnemy(scene) {
-    test_enemy = new Enemy(scene, 200, 300, player.getEntity(), layer3);
+    test_enemy = new Enemy(scene, 200, 300, player.getEntity(), test_stage.wall_layer);
 	
-	scene.physics.add.collider(test_enemy.getEntity(), layer3);
-	scene.physics.add.collider(test_enemy.getEntity(), layer2);
+	scene.physics.add.collider(test_enemy.getEntity(), test_stage.wall_layer);
     return test_enemy
 }
 
 function create() {
-	var map = this.make.tilemap({ key: 'map' });
-	var tileset = map.addTilesetImage('terrain');
-	var layer = map.createStaticLayer('Background', tileset, 0, 0);
-	layer2 = map.createStaticLayer('Borders', tileset, 0, 0);
-	layer3 = map.createStaticLayer('Plataforms', tileset, 0, 0);
-	layer3.setCollisionBetween(0, 999);
-	layer2.setCollisionBetween(0,999);
-	
+	test_stage = new Stage(this, 'map');	
     player = new Player(this, 'dude')
     player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
@@ -58,8 +49,7 @@ function create() {
     
 	test_enemy = spawnEnemy(this)
 	
-	this.physics.add.collider(player.getEntity(), layer3);
-	this.physics.add.collider(player.getEntity(), layer2);
+	this.physics.add.collider(player.getEntity(), test_stage.wall_layer);
 	
     game.canvas.addEventListener('mousedown', function () {
 		game.input.mouse.requestPointerLock();
