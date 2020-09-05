@@ -56,7 +56,4 @@ class Bullet extends Phaser.GameObjects.Image {
             this.entity.setVisible(false);
         }
     }
-    getEntity() {
-        return this.entity;
-    }
 }
