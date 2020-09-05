@@ -13,8 +13,8 @@ class Stage {
 		this.floor_graph = new Graph();
 		let offset = this.floor_layer.layer.baseTileHeight/2;
 		
-		for(var x = 0; x < this.floor_layer.layer.data.length; x += 1)
-			for(var y = 0; y < this.floor_layer.layer.data.length; y += 1)
+		for(var x = 0; x < this.floor_layer.layer.height; x += 1)
+			for(var y = 0; y < this.floor_layer.layer.width; y += 1)
 				if(this.floor_layer.layer.data[x][y].index != -1)
 					this.floor_graph.addVertex(x * this.floor_layer.layer.width + y, {centerPosition: {y: x * this.floor_layer.layer.baseTileHeight + offset, x: y * this.floor_layer.layer.baseTileHeight + offset}});
 				
