@@ -36,12 +36,12 @@ class Graph {
 		visitedNodes.push(vRoot);
 		
 		while(queue.length > 0 && run) {
-			var uNode = queue.pop()
+			var uNode = queue.shift()
 			this.adjList.get(uNode).edges.forEach(vNode => {
-				if(!visitedNodes.includes(vNode)) {
+				if(!visitedNodes.includes(vNode) && run) {
 					originTreeEdge.unshift(uNode)
 					destinationTreeEdge.unshift(vNode)
-					if(vNode == vDestination) {
+					if(vNode == vDestination || uNode == vDestination) {
 						run = false;
 					}
 					if(run) {
@@ -51,18 +51,20 @@ class Graph {
 				}
 			});
 		}
-		
+
+		run = true;
 		var path = new Array()
 		var destination = vDestination;
 		destinationTreeEdge.forEach((node, index) => {
 			if(node == destination) {
 				path.unshift(node)
-				path.unshift(originTreeEdge[index])
 				destination = originTreeEdge[index];
+				if(destination == vRoot) {
+					return;
+				}
 			}
 			
 		})
-		// console.log(path)
-		return path;
+		return path[0];
 	}
 }

@@ -23,12 +23,15 @@ class Enemy {
 	}
 	
 	followPath(player, stage){
-		// var thisVertex = stage.floor_graph.getVertex(thisTile.x + (thisTile.y * stage.floor_layer.layer.width))
-		// var playerVertex = stage.floor_graph.getVertex(playerTile.x + (playerTile.y * stage.floor_layer.layer.width))
-		// console.log(playerTile.x + (playerTile.y * stage.floor_layer.layer.width))
-		// console.log(thisNode, playerNode, stage.floor_graph.BFSShortestPath(thisNode, playerNode))
-		this.entity.body.setVelocityX(0);
-		this.entity.body.setVelocityY(0);
+		var thisTile = stage.map.getTileAtWorldXY(this.entity.x, this.entity.y)
+		var playerTile = stage.map.getTileAtWorldXY(player.entity.x, player.entity.y)
+		if(thisTile && playerTile) {
+			var thisNode = thisTile.x + (thisTile.y * stage.floor_layer.layer.width)
+			var playerNode = playerTile.x + (playerTile.y * stage.floor_layer.layer.width)
+			var next_vertex = stage.floor_graph.getVertex(stage.floor_graph.BFSShortestPath(thisNode, playerNode))
+			this.entity.rotation = Phaser.Math.Angle.Between(this.entity.x, this.entity.y, next_vertex.centerPosition.x, next_vertex.centerPosition.y);
+			this.game.physics.velocityFromRotation(this.entity.rotation, 200, this.entity.body.velocity);
+		}
 	}
 	
 	getInput() {
@@ -40,11 +43,6 @@ class Enemy {
 	}
 	
 	update(player, stage) {
-		var thisTile = stage.map.getTileAtWorldXY(this.entity.x, this.entity.y)
-		var playerTile = stage.map.getTileAtWorldXY(player.entity.x, player.entity.y)
-		var thisNode = thisTile.x + (thisTile.y * stage.floor_layer.layer.width)
-		var playerNode = playerTile.x + (playerTile.y * stage.floor_layer.layer.width)
-		stage.floor_graph.BFSShortestPath(thisNode, playerNode)
 		switch(this.getInput()) {
 			case 0:
 				break;
