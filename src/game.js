@@ -91,8 +91,7 @@ function create() {
 
 }
 
-function constrainVelocity(sprite, maxVelocity)
-{
+function constrainVelocity(sprite, maxVelocity) {
     if (!sprite || !sprite.body)
       return;
 
@@ -138,6 +137,6 @@ function update() {
 		if(!enemy.isAlive())
 			enemies.splice(index, 1);
 		else
-			enemy.update();
+			enemy.update(player, current_stage);
 	});
 }
