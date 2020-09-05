@@ -13,43 +13,51 @@ var config = {
         preload: preload,
         create: create,
         update: update
-    }
+    },
+	loaderAsync: false
 };
 
 var game = new Phaser.Game(config);
-var test_enemy;
-var dummy_target;
-var test_stage;
+var current_stage;
+var enemies = [];
+var camera;
 
 function preload() {
-	this.load.tilemapTiledJSON('map', 'assets/test_tile_map.json');
 	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
 	this.load.image('spr_target', 'assets/spr_target.png');
-	this.load.image('terrain', 'assets/terrain.png');
     this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('dude', 'assets/dude.png');
     this.load.image('sight', 'assets/sight.png');
+	
+	//Dynamic loading is async and is pending a solution.
+	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
+	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
+	this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
+	this.load.json('stage1_info', `src/stages/stage1_info.json`);
+	
+	this.load.image('terrain', 'assets/terrain.png');
+	this.load.image('tilemap', 'assets/tilemap.png');
 }
 
-function spawnEnemy(scene) {
-    test_enemy = new Enemy(scene, 200, 300, player.getEntity(), test_stage.wall_layer);
+function loadStage(stage_name, scene) {
+	current_stage = new Stage(scene, stage_name);
+	player = new Player(scene, 'dude', current_stage.spawn_point.x, current_stage.spawn_point.y);
 	
-	scene.physics.add.collider(test_enemy.getEntity(), test_stage.wall_layer);
-    return test_enemy
+	current_stage.enemies.forEach((position) => {
+		enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
+	});
 }
 
 function create() {
-	test_stage = new Stage(this, 'map');	
-    player = new Player(this, 'dude')
+	loadStage('stage1', this)
+
     player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
 
-	var camera = this.cameras.main;
-    camera.startFollow(player.getEntity())
+	camera = this.cameras.main;
+    camera.startFollow(player.entity)
     
-	test_enemy = spawnEnemy(this)
-	
-	this.physics.add.collider(player.getEntity(), test_stage.wall_layer);
+	this.physics.add.collider(player.entity, current_stage.wall_layer);
 	
     game.canvas.addEventListener('mousedown', function () {
 		game.input.mouse.requestPointerLock();
@@ -59,13 +67,13 @@ function create() {
 		
 		if (this.input.mouse.locked)
         {
-			sight.getEntity().x += e.movementX;
-            sight.getEntity().y += e.movementY;
+			sight.entity.x += e.movementX;
+            sight.entity.y += e.movementY;
         }
 	}, this);
 	
     this.input.on('pointerdown', function (pointer, time, lastFired) {
-        if (player.getEntity().active === false)
+        if (player.entity.active === false)
             return;
         var bullet = null;
         if(player.getWeapon()) {
@@ -75,7 +83,9 @@ function create() {
         if (bullet)
         {
             bullet.fire(player, sight);
-            this.physics.add.collider(test_enemy.getEntity(), bullet, () => test_enemy.getHit(test_enemy.getEntity()));
+			enemies.forEach((enemy) => {
+				this.physics.add.collider(enemy.entity, bullet, () => enemy.getHit(enemy.entity));
+			});
         }
     }, this);
 
@@ -103,29 +113,31 @@ function constrainVelocity(sprite, maxVelocity)
 
 function constrainsight(sight)
 {
-    var distX = sight.getEntity().x-player.getEntity().x;
-    var distY = sight.getEntity().y-player.getEntity().y;
+    var distX = sight.entity.x-player.entity.x;
+    var distY = sight.entity.y-player.entity.y;
 
     if (distX > 800)
-        sight.getEntity().x = player.getEntity().x+800;
+        sight.entity.x = player.entity.x+800;
     else if (distX < -800)
-        sight.getEntity().x = player.getEntity().x-800;
+        sight.entity.x = player.entity.x-800;
 
     if (distY > 600)
-        sight.getEntity().y = player.getEntity().y+600;
+        sight.entity.y = player.entity.y+600;
     else if (distY < -600)
-        sight.getEntity().y = player.getEntity().y-600;
+        sight.entity.y = player.entity.y-600;
 }
 
 function update() {
-    player.setRotation(Phaser.Math.Angle.Between(player.getEntity().x, player.getEntity().y, sight.getEntity().x, sight.getEntity().y));
+    player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
     player.update()
 
-    sight.setVelocityX(player.getEntity().body.velocity.x)
-    sight.setVelocityY(player.getEntity().body.velocity.y)
-    if(test_enemy.isAlive()) {
-        test_enemy.update();
-    } else {
-        test_enemy = spawnEnemy(this)
-    }
+    sight.setVelocityX(player.entity.body.velocity.x)
+    sight.setVelocityY(player.entity.body.velocity.y)
+    
+	enemies.forEach((enemy, index) => {
+		if(!enemy.isAlive())
+			enemies.splice(index, 1);
+		else
+			enemy.update();
+	});
 }

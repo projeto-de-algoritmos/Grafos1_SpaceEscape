@@ -2,7 +2,7 @@ class Player {
     weapon = null
     constructor(game, image, x=0, y=0) {
         this.game = game
-        this.entity = this.game.physics.add.sprite(425, 360, image);
+        this.entity = this.game.physics.add.sprite(x, y, image);
         this.entity.setOrigin(0.5, 0.5).setDisplaySize(64, 64).setCollideWorldBounds(true).setDrag(500, 500);
 
         var entity = this.entity
@@ -60,10 +60,6 @@ class Player {
     }
 
     update() { }
-
-    getEntity() {
-        return this.entity;
-    }
 
     setRotation(rotation) {
         this.entity.rotation = rotation;
