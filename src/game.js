@@ -13,34 +13,51 @@ var config = {
         preload: preload,
         create: create,
         update: update
-    }
+    },
+	loaderAsync: false
 };
 
 var game = new Phaser.Game(config);
 var test_enemy;
-var dummy_target;
-var test_stage;
+var current_stage;
+var enemies = [];
 
 function preload() {
-	this.load.tilemapTiledJSON('map', 'assets/test_tile_map.json');
 	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
 	this.load.image('spr_target', 'assets/spr_target.png');
-	this.load.image('terrain', 'assets/terrain.png');
     this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('dude', 'assets/dude.png');
     this.load.image('sight', 'assets/sight.png');
+	
+	//Dynamic loading is async and is pending a solution.
+	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
+	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
+	this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
+	this.load.json('stage1_info', `src/stages/stage1_info.json`);
+	
+	this.load.image('terrain', 'assets/terrain.png');
+	this.load.image('tilemap', 'assets/tilemap.png');
 }
 
 function spawnEnemy(scene) {
-    test_enemy = new Enemy(scene, 200, 300, player.getEntity(), test_stage.wall_layer);
+    test_enemy = new Enemy(scene, 200, 300, player.getEntity(), current_stage.wall_layer);
 	
-	scene.physics.add.collider(test_enemy.getEntity(), test_stage.wall_layer);
+	scene.physics.add.collider(test_enemy.getEntity(), current_stage.wall_layer);
     return test_enemy
 }
 
+function loadStage(stage_name, scene) {
+	current_stage = new Stage(scene, stage_name);
+	player = new Player(scene, 'dude', current_stage.spawn_point.x, current_stage.spawn_point.y);
+	
+	current_stage.enemies.forEach((position) => {
+		enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
+	});
+}
+
 function create() {
-	test_stage = new Stage(this, 'map');	
-    player = new Player(this, 'dude')
+	loadStage('stage1', this)
+
     player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
 
@@ -49,7 +66,7 @@ function create() {
     
 	test_enemy = spawnEnemy(this)
 	
-	this.physics.add.collider(player.getEntity(), test_stage.wall_layer);
+	this.physics.add.collider(player.getEntity(), current_stage.wall_layer);
 	
     game.canvas.addEventListener('mousedown', function () {
 		game.input.mouse.requestPointerLock();
