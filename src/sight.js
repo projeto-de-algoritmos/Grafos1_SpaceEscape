@@ -6,10 +6,6 @@ class Sight {
         this.entity.setCollideWorldBounds(true);
     }
 
-    getEntity() {
-        return this.entity;
-    }
-
     setVelocityX(velocity) {
         this.entity.body.velocity.x = velocity
     }

@@ -3,7 +3,7 @@ class Player {
     constructor(game, image, x=0, y=0) {
         this.game = game
         this.entity = this.game.physics.add.sprite(x, y, image);
-        this.entity.setOrigin(0.5, 0.5).setDisplaySize(64, 64).setCollideWorldBounds(true).setDrag(500, 500);
+        this.entity.setOrigin(0.5, 0.5).setDisplaySize(48, 48).setCollideWorldBounds(true).setDrag(500, 500);
 
         var entity = this.entity
 
