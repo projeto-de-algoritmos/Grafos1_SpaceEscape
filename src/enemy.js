@@ -22,25 +22,34 @@ class Enemy {
 		this.game.physics.velocityFromRotation(this.entity.rotation, 200, this.entity.body.velocity);
 	}
 	
-	followPath(){
+	followPath(player, stage){
+		// var thisVertex = stage.floor_graph.getVertex(thisTile.x + (thisTile.y * stage.floor_layer.layer.width))
+		// var playerVertex = stage.floor_graph.getVertex(playerTile.x + (playerTile.y * stage.floor_layer.layer.width))
+		// console.log(playerTile.x + (playerTile.y * stage.floor_layer.layer.width))
+		// console.log(thisNode, playerNode, stage.floor_graph.BFSShortestPath(thisNode, playerNode))
 		this.entity.body.setVelocityX(0);
 		this.entity.body.setVelocityY(0);
 	}
 	
 	getInput() {
 		if(!cast_ray_into_tilemap(this.entity.x, this.entity.y, this.target.x, this.target.y, this.collision_layer).length)
-			return 2;
+		return 2;
 		else if(1)
-			return 1;
+		return 1;
 		return 0;
 	}
-		
-	update() {
+	
+	update(player, stage) {
+		var thisTile = stage.map.getTileAtWorldXY(this.entity.x, this.entity.y)
+		var playerTile = stage.map.getTileAtWorldXY(player.entity.x, player.entity.y)
+		var thisNode = thisTile.x + (thisTile.y * stage.floor_layer.layer.width)
+		var playerNode = playerTile.x + (playerTile.y * stage.floor_layer.layer.width)
+		stage.floor_graph.BFSShortestPath(thisNode, playerNode)
 		switch(this.getInput()) {
 			case 0:
 				break;
 			case 1:
-				this.followPath();
+				this.followPath(player, stage);
 				break;
 			case 2:
 				this.followTarget();

@@ -5,7 +5,7 @@ function cast_ray_into_tilemap(x0, y0, x1, y1, layer) {
 
 class Graph {
 	constructor() {
-		this.vertices = 0;
+		// this.vertices = 0;
 		this.adjList = new Map();
 	}
 	
@@ -20,5 +20,49 @@ class Graph {
 	
 	getVertex(v) {
 		return this.adjList.get(v);
+	}
+
+	BFSShortestPath(vRoot, vDestination) {
+		if(vRoot == vDestination) {
+			return [vDestination]
+		}
+		var originTreeEdge = new Array();
+		var destinationTreeEdge = new Array();
+		var queue = new Array();
+		var visitedNodes = new Array();
+		var run = true;
+		
+		queue.push(vRoot);
+		visitedNodes.push(vRoot);
+		
+		while(queue.length > 0 && run) {
+			var uNode = queue.pop()
+			this.adjList.get(uNode).edges.forEach(vNode => {
+				if(!visitedNodes.includes(vNode)) {
+					originTreeEdge.unshift(uNode)
+					destinationTreeEdge.unshift(vNode)
+					if(vNode == vDestination) {
+						run = false;
+					}
+					if(run) {
+						visitedNodes.push(vNode)
+						queue.push(vNode)
+					}
+				}
+			});
+		}
+		
+		var path = new Array()
+		var destination = vDestination;
+		destinationTreeEdge.forEach((node, index) => {
+			if(node == destination) {
+				path.unshift(node)
+				path.unshift(originTreeEdge[index])
+				destination = originTreeEdge[index];
+			}
+			
+		})
+		// console.log(path)
+		return path;
 	}
 }

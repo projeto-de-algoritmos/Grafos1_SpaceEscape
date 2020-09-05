@@ -12,11 +12,11 @@ class Bullet extends Phaser.GameObjects.Image {
     }
 
     fire(shooter, target) {
-        this.entity.setPosition(shooter.getEntity().x, shooter.getEntity().y); // Initial position
-        this.entity.direction = Math.atan((target.getEntity().x - this.entity.x) / (target.getEntity().y - this.entity.y));
+        this.entity.setPosition(shooter.entity.x, shooter.entity.y); // Initial position
+        this.entity.direction = Math.atan((target.entity.x - this.entity.x) / (target.entity.y - this.entity.y));
 
         // Calculate X and y velocity of bullet to moves it from shooter to target
-        if (target.getEntity().y >= this.entity.y) {
+        if (target.entity.y >= this.entity.y) {
             this.entity.xSpeed = this.entity.speed * Math.sin(this.entity.direction);
             this.entity.ySpeed = this.entity.speed * Math.cos(this.entity.direction);
         }
@@ -25,7 +25,7 @@ class Bullet extends Phaser.GameObjects.Image {
             this.entity.ySpeed = -this.entity.speed * Math.cos(this.entity.direction);
         }
 
-        this.entity.rotation = shooter.getEntity().rotation; // angle bullet with shooters rotation
+        this.entity.rotation = shooter.entity.rotation; // angle bullet with shooters rotation
         this.entity.born = 0; // Time since new bullet spawned
     }
 
