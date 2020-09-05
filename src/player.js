@@ -61,10 +61,6 @@ class Player {
 
     update() { }
 
-    getEntity() {
-        return this.entity;
-    }
-
     setRotation(rotation) {
         this.entity.rotation = rotation;
     }

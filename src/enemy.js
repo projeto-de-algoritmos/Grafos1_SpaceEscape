@@ -48,10 +48,6 @@ class Enemy {
 		}
 	}
 
-	getEntity() {
-		return this.entity;
-	}
-
 	isAlive() {
 		if(this.health > 0) {
 			return true
