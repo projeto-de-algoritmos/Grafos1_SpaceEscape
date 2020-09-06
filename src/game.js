@@ -1,7 +1,7 @@
-var Stage1 = new Phaser.Class({
+var Main_Menu = new Phaser.Class({
 	Extends: Phaser.Scene,
 	initialize: function Stage1() {
-		Phaser.Scene.call(this, {key: 'st_1'});
+		Phaser.Scene.call(this, {key: 'main_menu'});
 	},
 	
 	preload: function() {
@@ -13,7 +13,59 @@ var Stage1 = new Phaser.Class({
 			
 		this.load.image('terrain', 'assets/terrain.png');
 		this.load.image('tilemap', 'assets/tilemap.png');
+		this.load.image('main_menu_bg', 'assets/menu_background.png');
 		
+		this.load.audio('focus_move', 'assets/focus_move.mp3');
+		this.load.audio('confirm', 'assets/confirm.mp3');
+	},
+	
+	create: function() {
+		bg = this.add.image(0, 0, 'main_menu_bg',).setOrigin(0);
+		start_game = this.add.text(640, 510, 'START GAME', {fontFamily: '"Impact"', fontSize: 50, color: "#361717"}).setOrigin(0.5);
+		dont_start = this.add.text(640, 585, "DON'T START", {fontFamily: '"Impact"', fontSize: 50, color: "#361717"}).setOrigin(0.5);
+		conf = this.sound.add('confirm');
+		focus_move = this.sound.add('focus_move');
+		
+		start_game.setInteractive();
+		dont_start.setInteractive();
+		
+		start_game.on("pointerover", () => {
+			start_game.setColor("#b1a9af");
+			focus_move.play();
+		});
+		
+		start_game.on("pointerout", () => {
+			start_game.setColor("#361717");
+		});
+		
+		start_game.on("pointerup", () => {
+			conf.play();
+			this.scene.start('st_1');
+			this.scene.stop('main_menu');
+		});
+		
+		dont_start.on("pointerover", () => {
+			dont_start.setColor("#b1a9af");
+			focus_move.play();
+		});
+		
+		dont_start.on("pointerout", () => {
+			dont_start.setColor("#361717");
+		});
+		
+		dont_start.on("pointerup", () => {
+			conf.play();
+		});
+	}
+});
+
+var Stage1 = new Phaser.Class({
+	Extends: Phaser.Scene,
+	initialize: function Stage1() {
+		Phaser.Scene.call(this, {key: 'st_1'});
+	},
+	
+	preload: function() {		
 		this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
 		this.load.json('stage1_info', `src/stages/stage1_info.json`);
 	},
@@ -23,7 +75,7 @@ var Stage1 = new Phaser.Class({
 		create(this);
 	},
 	
-	update: update
+	update: function() {update(this)}
 });
 
 var Stage2 = new Phaser.Class({
@@ -42,7 +94,7 @@ var Stage2 = new Phaser.Class({
 		create(this);
 	},
 	
-	update: update
+	update: function() {update(this)}
 });
 
 var Stage3 = new Phaser.Class({
@@ -61,15 +113,16 @@ var Stage3 = new Phaser.Class({
 		create(this);
 	},
 	
-	update: update
+	update: function() {update(this)}
 });
 
 function loadStage(stage_name, scene) {
 	scene.stage = new Stage(scene, stage_name);
-	scene.player = new Player(scene, 'dude', current_stage.spawn_point.x, current_stage.spawn_point.y);
+	scene.player = new Player(scene, 'dude', scene.stage.spawn_point.x, scene.stage.spawn_point.y);
+	scene.enemies = [];
 	
 	scene.stage.enemies.forEach((position) => {
-		scene.enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
+		scene.enemies.push(new Enemy(scene, position.x, position.y, scene.player.entity, scene.stage.wall_layer));
 	});
 }
 
@@ -115,7 +168,7 @@ function create(scene) {
 
 }
 
-function update() {
+function update(scene) {
     scene.player.setRotation(Phaser.Math.Angle.Between(scene.player.entity.x, scene.player.entity.y, sight.entity.x, sight.entity.y));
     scene.player.update();
 
@@ -126,7 +179,7 @@ function update() {
 		if(!enemy.isAlive())
 			scene.enemies.splice(index, 1);
 		else
-			enemy.update(scene.player, current_stage);
+			enemy.update(scene.player, scene.stage);
 	});
 }
 
@@ -141,7 +194,7 @@ var config = {
             debug: false
         }
     },
-    scene: [Stage1, Stage2, Stage3],
+    scene: [Main_Menu, Stage1, Stage2, Stage3],
 	loaderAsync: false,
 	pixelArt: true,
 	backgroundColor: "#493743"
