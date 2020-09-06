@@ -29,10 +29,15 @@ class Bullet extends Phaser.GameObjects.Image {
         this.entity.born = 0; // Time since new bullet spawned
     }
 
-    enemyHitCallback(enemyHit, bulletHit) {
-        console.log(enemyHit, bulletHit)
+    hitCallback(target) {
+        target.getHit()
+        this.entity.destroy()
+        // console.log(enemyHit, bulletHit)
         // Reduce health of enemy
-        console.log('asdo')
+        // console.log(this.entity.active)
+        // this.entity.setActive(false);
+        // this.entity.setVisible(false);
+        // console.log(this.entity.active)
         // if (bulletHit.active === true && enemyHit.active === true) {
         //     // enemyHit.health = enemyHit.health - 1;
         //     // console.log("Enemy hp: ", enemyHit.health);
@@ -48,12 +53,15 @@ class Bullet extends Phaser.GameObjects.Image {
     }
 
     update(time, delta) {
-        this.entity.x += this.entity.xSpeed * delta;
-        this.entity.y += this.entity.ySpeed * delta;
-        this.entity.born += delta;
-        if (this.entity.born > 1800) {
-            this.entity.setActive(false);
-            this.entity.setVisible(false);
+        if(this.entity.active) {
+            this.entity.x += this.entity.xSpeed * delta;
+            this.entity.y += this.entity.ySpeed * delta;
+            this.entity.born += delta;
+            if (this.entity.born > 1800) {
+                this.entity.setActive(false);
+                this.entity.setVisible(false);
+                this.entity.destroy()
+            }
         }
     }
 }

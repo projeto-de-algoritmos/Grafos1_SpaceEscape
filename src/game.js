@@ -29,14 +29,14 @@ function preload() {
     this.load.image('dude', 'assets/dude.png');
     this.load.image('sight', 'assets/sight.png');
 	
-	//Dynamic loading is async and is pending a solution.
 	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
 	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
 	this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
 	this.load.json('stage1_info', `src/stages/stage1_info.json`);
-	
 	this.load.image('terrain', 'assets/terrain.png');
-	this.load.image('tilemap', 'assets/tilemap.png');
+    this.load.image('tilemap', 'assets/tilemap.png');
+    
+    this.load.audio('gunshot', 'assets/sounds/gunshot.mp3')
 }
 
 function loadStage(stage_name, scene) {
@@ -44,30 +44,34 @@ function loadStage(stage_name, scene) {
 	player = new Player(scene, 'dude', current_stage.spawn_point.x, current_stage.spawn_point.y);
 	
 	current_stage.enemies.forEach((position) => {
-		enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
-	});
+        enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
+    });
 }
 
 function create() {
-	loadStage('stage1', this)
+    loadStage('stage1', this)
+	
+    sight = new Sight(this)
+    camera = this.cameras.main;
+    
+    this.physics.add.collider(player.entity, current_stage.wall_layer);
+    
+    enemies.forEach((enemy) => {
+        this.physics.add.collider(enemy.entity, player.entity, () => player.getHit());
+    });
 
     player.pickupWeapon(new Weapon(this))
-	sight = new Sight(this)
-
-	camera = this.cameras.main;
     camera.startFollow(player.entity)
-    
-	this.physics.add.collider(player.entity, current_stage.wall_layer);
-	
+
     game.canvas.addEventListener('mousedown', function () {
-		game.input.mouse.requestPointerLock();
+        game.input.mouse.requestPointerLock();
     });
 	
     this.input.on('pointermove', function (e) {
-		
+        
 		if (this.input.mouse.locked)
         {
-			sight.entity.x += e.movementX;
+            sight.entity.x += e.movementX;
             sight.entity.y += e.movementY;
         }
 	}, this);
@@ -78,14 +82,11 @@ function create() {
         var bullet = null;
         if(player.getWeapon()) {
             bullet = player.shoot(player, sight)
-        }
-			
-        if (bullet)
-        {
-            bullet.fire(player, sight);
-			enemies.forEach((enemy) => {
-				this.physics.add.collider(enemy.entity, bullet, () => enemy.getHit(enemy.entity));
-			});
+            if (bullet) {
+                enemies.forEach((enemy) => {
+                    this.physics.add.collider(enemy.entity, bullet, () => bullet.hitCallback(enemy));
+                });
+            }
         }
     }, this);
 
@@ -129,9 +130,10 @@ function constrainsight(sight)
 function update() {
     player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
     player.update()
-
-    sight.setVelocityX(player.entity.body.velocity.x)
-    sight.setVelocityY(player.entity.body.velocity.y)
+    if(player.entity.active) {
+        sight.setVelocityX(player.entity.body.velocity.x)
+        sight.setVelocityY(player.entity.body.velocity.y)
+    }
     
 	enemies.forEach((enemy, index) => {
 		if(!enemy.isAlive())

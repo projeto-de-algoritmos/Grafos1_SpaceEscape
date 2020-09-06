@@ -1,5 +1,6 @@
 class Player {
-    weapon = null
+    weapon = null;
+    health = 100;
     constructor(game, image, x=0, y=0) {
         this.game = game
         this.entity = this.game.physics.add.sprite(x, y, image);
@@ -43,6 +44,14 @@ class Player {
             if (moveKeys['left'].isUp)
                 entity.setAccelerationX(0);
         });
+    }
+
+    getHit() {
+        console.log(this.health)
+        this.health--;
+        if(this.health <= 0) {
+            this.entity.destroy()
+        }
     }
 
     shoot(player, sight) {

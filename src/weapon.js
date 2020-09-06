@@ -5,6 +5,8 @@ class Weapon {
     }
 
     fire(shooter, target) {
+        var gunshot = this.game.sound.add('gunshot')
+        gunshot.play()
         var bullet = new Bullet({scene: this.game})
         // var bullets = this.game.physics.add.group({ classType: Bullet, runChildUpdate: true });
 		this.bullets.add(bullet.entity)
