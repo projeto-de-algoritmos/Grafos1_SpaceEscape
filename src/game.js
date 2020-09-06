@@ -15,7 +15,8 @@ var config = {
         update: update
     },
 	loaderAsync: false,
-	pixelArt: true
+	pixelArt: true,
+	backgroundColor: "#493743"
 };
 
 var game = new Phaser.Game(config);
