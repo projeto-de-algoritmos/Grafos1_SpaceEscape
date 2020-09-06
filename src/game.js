@@ -26,7 +26,7 @@ function preload() {
 	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
 	this.load.image('spr_target', 'assets/spr_target.png');
     this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
-    this.load.image('dude', 'assets/dude.png');
+    this.load.image('dude', 'assets/guy.png');
     this.load.image('sight', 'assets/sight.png');
 	
 	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
@@ -82,9 +82,10 @@ function create() {
         var bullet = null;
         if(player.getWeapon()) {
             bullet = player.shoot(player, sight)
+
             if (bullet) {
                 enemies.forEach((enemy) => {
-                    this.physics.add.collider(enemy.entity, bullet, () => bullet.hitCallback(enemy));
+                    this.physics.add.collider(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
                 });
             }
         }

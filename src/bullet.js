@@ -1,65 +1,39 @@
-class Bullet extends Phaser.GameObjects.Image {
-    constructor(config) {
-        super(config.scene, config.x, config.y, 'bullet');
-        this.entity = config.scene.add.existing(this).setDisplaySize(16, 8);
-
-        this.entity.speed = 1;
+class Bullet {
+    constructor(game) {
+        this.game = game;
+        this.entity = game.physics.add.image(0, 0, 'bullet').setDisplaySize(16, 8);
         this.entity.born = 0;
         this.entity.direction = 0;
-        this.entity.xSpeed = 0;
-        this.entity.ySpeed = 0;
-        this.entity.setSize(12, 12, true);
+        this.entity.speed = 1
     }
-
+    
     fire(shooter, target) {
         this.entity.setPosition(shooter.entity.x, shooter.entity.y); // Initial position
         this.entity.direction = Math.atan((target.entity.x - this.entity.x) / (target.entity.y - this.entity.y));
-
-        // Calculate X and y velocity of bullet to moves it from shooter to target
+        
         if (target.entity.y >= this.entity.y) {
-            this.entity.xSpeed = this.entity.speed * Math.sin(this.entity.direction);
-            this.entity.ySpeed = this.entity.speed * Math.cos(this.entity.direction);
+            this.entity.body.velocity.x = this.entity.speed * Math.sin(this.entity.direction);
+            this.entity.body.velocity.y = this.entity.speed * Math.cos(this.entity.direction);
         }
         else {
-            this.entity.xSpeed = -this.entity.speed * Math.sin(this.entity.direction);
-            this.entity.ySpeed = -this.entity.speed * Math.cos(this.entity.direction);
+            this.entity.body.velocity.x = - this.entity.speed * Math.sin(this.entity.direction);
+            this.entity.body.velocity.y = - this.entity.speed * Math.cos(this.entity.direction);
         }
-
-        this.entity.rotation = shooter.entity.rotation; // angle bullet with shooters rotation
-        this.entity.born = 0; // Time since new bullet spawned
+        
+        this.entity.rotation = shooter.entity.rotation;
+        this.game.physics.velocityFromRotation(this.entity.rotation, 1200, this.entity.body.velocity);
+        this.entity.born = 0;
     }
 
-    hitCallback(target) {
+    hitCallBack(target) {
         target.getHit()
         this.entity.destroy()
-        // console.log(enemyHit, bulletHit)
-        // Reduce health of enemy
-        // console.log(this.entity.active)
-        // this.entity.setActive(false);
-        // this.entity.setVisible(false);
-        // console.log(this.entity.active)
-        // if (bulletHit.active === true && enemyHit.active === true) {
-        //     // enemyHit.health = enemyHit.health - 1;
-        //     // console.log("Enemy hp: ", enemyHit.health);
-
-        //     // Kill enemy if health <= 0
-        //     // if (enemyHit.health <= 0) {
-        //     //     enemyHit.setActive(false).setVisible(false);
-        //     // }
-
-        //     // Destroy bullet
-        //     bulletHit.setActive(false).setVisible(false);
-        // }
     }
 
     update(time, delta) {
         if(this.entity.active) {
-            this.entity.x += this.entity.xSpeed * delta;
-            this.entity.y += this.entity.ySpeed * delta;
             this.entity.born += delta;
             if (this.entity.born > 1800) {
-                this.entity.setActive(false);
-                this.entity.setVisible(false);
                 this.entity.destroy()
             }
         }

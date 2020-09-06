@@ -1,5 +1,5 @@
 class Enemy {
-	health = 2;
+	health = 8;
 	constructor(game, x = 0, y = 0, player = null, collision_layer = null) {
 		this.entity = game.physics.add.sprite(x, y, 'spr_enemy');
 		this.entity.setCollideWorldBounds(true);
