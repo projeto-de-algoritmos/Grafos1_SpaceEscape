@@ -62,16 +62,9 @@ function create() {
     });
 
     camera.startFollow(player.entity)
-    floorGun = new Item(this, 650, 650, '1911', player).entity.setDisplaySize(24, 16);
-    console.log(floorGun)
-    this.physics.add.overlap(floorGun, player.entity, () => {
-        if(floorGun) {
-            console.log('shit')
-            player.pickupWeapon(new Weapon(this));
-            floorGun.destroy()
-        }
-    });
-    // player.pickupWeapon(new Weapon(this))
+    floorGun = new Item(this, 650, 650, '1911', player)
+    floorGun.entity.setDisplaySize(24, 16);
+    floorGun.createOverlap(player)
 
     game.canvas.addEventListener('mousedown', function () {
         game.input.mouse.requestPointerLock();
