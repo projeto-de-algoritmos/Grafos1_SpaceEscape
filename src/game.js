@@ -28,6 +28,7 @@ function preload() {
     this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
     this.load.image('dude', 'assets/guy.png');
     this.load.image('sight', 'assets/sight.png');
+    this.load.image('1911', 'assets/1911.png');
 	
 	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
 	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
@@ -60,8 +61,17 @@ function create() {
         this.physics.add.collider(enemy.entity, player.entity, () => player.getHit());
     });
 
-    player.pickupWeapon(new Weapon(this))
     camera.startFollow(player.entity)
+    floorGun = new Item(this, 650, 650, '1911', player).entity.setDisplaySize(24, 16);
+    console.log(floorGun)
+    this.physics.add.overlap(floorGun, player.entity, () => {
+        if(floorGun) {
+            console.log('shit')
+            player.pickupWeapon(new Weapon(this));
+            floorGun.destroy()
+        }
+    });
+    // player.pickupWeapon(new Weapon(this))
 
     game.canvas.addEventListener('mousedown', function () {
         game.input.mouse.requestPointerLock();
