@@ -34,6 +34,10 @@ function preload() {
 	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
 	this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
 	this.load.json('stage1_info', `src/stages/stage1_info.json`);
+	this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
+	this.load.json('stage2_info', `src/stages/stage2_info.json`);
+	this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
+	this.load.json('stage3_info', `src/stages/stage3_info.json`);
 	
 	this.load.image('terrain', 'assets/terrain.png');
 	this.load.image('tilemap', 'assets/tilemap.png');
@@ -49,7 +53,7 @@ function loadStage(stage_name, scene) {
 }
 
 function create() {
-	loadStage('stage1', this)
+	loadStage('stage3', this)
 
     player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
