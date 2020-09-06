@@ -95,47 +95,12 @@ function create() {
 
 }
 
-function constrainVelocity(sprite, maxVelocity) {
-    if (!sprite || !sprite.body)
-      return;
-
-    var angle, currVelocitySqr, vx, vy;
-    vx = sprite.body.velocity.x;
-    vy = sprite.body.velocity.y;
-    currVelocitySqr = vx * vx + vy * vy;
-
-    if (currVelocitySqr > maxVelocity * maxVelocity)
-    {
-        angle = Math.atan2(vy, vx);
-        vx = Math.cos(angle) * maxVelocity;
-        vy = Math.sin(angle) * maxVelocity;
-        sprite.body.velocity.x = vx;
-        sprite.body.velocity.y = vy;
-    }
-}
-
-function constrainsight(sight)
-{
-    var distX = sight.entity.x-player.entity.x;
-    var distY = sight.entity.y-player.entity.y;
-
-    if (distX > 800)
-        sight.entity.x = player.entity.x+800;
-    else if (distX < -800)
-        sight.entity.x = player.entity.x-800;
-
-    if (distY > 600)
-        sight.entity.y = player.entity.y+600;
-    else if (distY < -600)
-        sight.entity.y = player.entity.y-600;
-}
-
 function update() {
     player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
     player.update()
 
-    sight.setVelocityX(player.entity.body.velocity.x)
-    sight.setVelocityY(player.entity.body.velocity.y)
+	sight.entity.x += player.entity.body.deltaXFinal();
+	sight.entity.Y += player.entity.body.deltaYFinal();
     
 	enemies.forEach((enemy, index) => {
 		if(!enemy.isAlive())

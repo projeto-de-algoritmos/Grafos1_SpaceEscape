@@ -3,7 +3,6 @@ class Sight {
         this.game = game
         this.entity = this.game.physics.add.sprite(800, 700, 'sight');
         this.entity.setDisplaySize(64, 64);
-        this.entity.setCollideWorldBounds(true);
     }
 
     setVelocityX(velocity) {

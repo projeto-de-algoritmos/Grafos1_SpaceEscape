@@ -4,8 +4,7 @@ class Player {
         this.game = game
         this.entity = this.game.physics.add.sprite(x, y, image);
         this.entity.setOrigin(0.5, 0.5).setDisplaySize(48, 48).setCollideWorldBounds(true).setDrag(500, 500);
-
-        var entity = this.entity
+		this.velocity = 200;
 
         this.moveKeys = this.game.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.W,
@@ -34,16 +33,16 @@ class Player {
 		let velocityY = 0;
 		
 		if(this.moveKeys['right'].isDown)
-			velocityX += 200;
+			velocityX += this.velocity;
 		
 		if(this.moveKeys['left'].isDown)
-			velocityX -= 200;
+			velocityX -= this.velocity;
 		
 		if(this.moveKeys['down'].isDown)
-			velocityY += 200;
+			velocityY += this.velocity;
 		
 		if(this.moveKeys['up'].isDown)
-			velocityY -= 200;
+			velocityY -= this.velocity;
 		
 		this.entity.setVelocityY(velocityY);
 		this.entity.setVelocityX(velocityX);
