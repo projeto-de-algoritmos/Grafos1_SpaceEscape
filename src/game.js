@@ -14,7 +14,8 @@ var config = {
         create: create,
         update: update
     },
-	loaderAsync: false
+	loaderAsync: false,
+	pixelArt: true
 };
 
 var game = new Phaser.Game(config);
@@ -59,6 +60,7 @@ function create() {
 	sight = new Sight(this)
 
 	camera = this.cameras.main;
+	camera.setZoom(2);
     camera.startFollow(player.entity)
     
 	this.physics.add.collider(player.entity, current_stage.wall_layer);
@@ -97,10 +99,10 @@ function create() {
 
 function update() {
     player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
-    player.update()
+    player.update();
 
 	sight.entity.x += player.entity.body.deltaXFinal();
-	sight.entity.Y += player.entity.body.deltaYFinal();
+	sight.entity.y += player.entity.body.deltaYFinal();
     
 	enemies.forEach((enemy, index) => {
 		if(!enemy.isAlive())
