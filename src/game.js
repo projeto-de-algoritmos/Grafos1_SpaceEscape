@@ -1,3 +1,243 @@
+var Main_Menu = new Phaser.Class({
+	Extends: Phaser.Scene,
+	initialize: function Main_Menu() {
+		Phaser.Scene.call(this, {key: 'main_menu'});
+	},
+	
+	preload: function() {
+		this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
+		this.load.image('spr_target', 'assets/spr_target.png');
+		this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
+		this.load.image('dude', 'assets/guy.png');
+		this.load.image('sight', 'assets/sight.png');
+		this.load.image('1911', 'assets/1911.png');
+		
+		this.load.audio('cock', 'assets/sounds/cock.mp3');
+    this.load.audio('gunshot', 'assets/sounds/gunshot.mp3');
+			
+		this.load.image('terrain', 'assets/terrain.png');
+		this.load.image('tilemap', 'assets/tilemap.png');
+		this.load.image('main_menu_bg', 'assets/menu_background.png');
+		this.load.image('red', 'assets/red.png');
+		
+		this.load.audio('focus_move', 'assets/focus_move.mp3');
+		this.load.audio('confirm', 'assets/confirm.mp3');
+		
+		this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
+		this.load.json('stage1_info', `src/stages/stage1_info.json`);
+		
+		this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
+		this.load.json('stage2_info', `src/stages/stage2_info.json`);
+		
+		this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
+		this.load.json('stage3_info', `src/stages/stage3_info.json`);
+	},
+	
+	create: function() {
+		bg = this.add.image(0, 0, 'main_menu_bg',).setOrigin(0);
+		start_game = this.add.text(640, 510, 'START GAME', {fontFamily: '"Impact"', fontSize: 50, color: "#361717"}).setOrigin(0.5);
+		dont_start = this.add.text(640, 585, "DON'T START", {fontFamily: '"Impact"', fontSize: 50, color: "#361717"}).setOrigin(0.5);
+		conf = this.sound.add('confirm');
+		focus_move = this.sound.add('focus_move');
+		
+		start_game.setInteractive();
+		dont_start.setInteractive();
+		
+		start_game.on("pointerover", () => {
+			start_game.setColor("#b1a9af");
+			focus_move.play();
+		});
+		
+		start_game.on("pointerout", () => {
+			start_game.setColor("#361717");
+		});
+		
+		start_game.on("pointerup", () => {
+			conf.play();
+			this.scene.start('st_1');
+			this.scene.stop('main_menu');
+		});
+		
+		dont_start.on("pointerover", () => {
+			dont_start.setColor("#b1a9af");
+			focus_move.play();
+		});
+		
+		dont_start.on("pointerout", () => {
+			dont_start.setColor("#361717");
+		});
+		
+		dont_start.on("pointerup", () => {
+			conf.play();
+		});
+	}
+});
+
+var Stage1 = new Phaser.Class({
+	Extends: Phaser.Scene,
+	initialize: function Stage1() {
+		Phaser.Scene.call(this, {key: 'st_1'});
+	},
+	
+	preload: function() {	
+		//this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
+		//this.load.json('stage1_info', `src/stages/stage1_info.json`);
+	},
+	
+	create: function() {
+		this.next_stage = 2;
+		loadStage('stage1', this);
+		create(this);
+	},
+	
+	update: function() {update(this)}
+});
+
+var Stage2 = new Phaser.Class({
+	Extends: Phaser.Scene,
+	initialize: function Stage2() {
+		Phaser.Scene.call(this, {key: 'st_2'});
+	},
+	
+	preload: function() {
+		//this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
+		//this.load.json('stage2_info', `src/stages/stage2_info.json`);
+	},
+	
+	create: function() {
+		this.next_stage = 3;
+		loadStage('stage2', this);
+		create(this);
+	},
+	
+	update: function() {update(this)}
+});
+
+var Stage3 = new Phaser.Class({
+	Extends: Phaser.Scene,
+	initialize: function Stage3() {
+		Phaser.Scene.call(this, {key: 'st_3'});
+	},
+	
+	preload: function() {
+		//this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
+		//this.load.json('stage3_info', `src/stages/stage3_info.json`);
+	},
+	
+	create: function() {
+		loadStage('stage3', this);
+		create(this);
+	},
+	
+	update: function() {update(this)}
+});
+
+function loadStage(stage_name, scene) {
+	scene.stage_finished = false;
+	scene.stage = new Stage(scene, stage_name);
+	scene.player = new Player(scene, 'dude', scene.stage.spawn_point.x, scene.stage.spawn_point.y);
+	scene.enemies = [];
+	scene.items = [];
+	console.log(scene.stage)
+	scene.end_area = scene.add.image(scene.stage.end_area.start.x, scene.stage.end_area.start.y, 'red').setOrigin(0).setDisplaySize(scene.stage.end_area.end.x - scene.stage.end_area.start.x, scene.stage.end_area.end.y - scene.stage.end_area.start.y).setAlpha(0);
+	
+	scene.physics.add.staticGroup(scene.end_area);
+	
+	scene.physics.add.overlap(scene.end_area, scene.player.entity, () => {
+		if(scene.stage_finished) {
+			game.scene.start(`st_${scene.next_stage}`);
+			game.scene.stop(scene.scene.key);
+			scene.stopped = true;
+		}
+	});
+	
+	scene.stage.enemies.forEach((position) => {
+		scene.enemies.push(new Enemy(scene, position.x, position.y, scene.player.entity, scene.stage.wall_layer));
+	});
+	
+	scene.stage.items.forEach((item) => {
+		let it = new Item(scene, item.x, item.y, item.image, item.name);
+		it.createOverlap(scene.player);
+		scene.items.push(it);
+	});
+}
+
+function create(scene) {
+	scene.weapons = [];
+	sight = new Sight(scene)
+	
+
+	camera = scene.cameras.main;
+	camera.setZoom(2);
+    camera.startFollow(scene.player.entity)
+    
+	scene.physics.add.collider(scene.player.entity, scene.stage.wall_layer);
+	scene.enemies.forEach((enemy) => {
+        scene.physics.add.collider(enemy.entity, scene.player.entity, () => scene.player.getHit());
+    });
+	
+    game.canvas.addEventListener('mousedown', function () {
+        game.input.mouse.requestPointerLock();
+    });
+	
+    scene.input.on('pointermove', function (e) {
+		if (scene.input.mouse.locked) {
+            sight.entity.x += e.movementX;
+            sight.entity.y += e.movementY;
+        }
+	}, scene);
+	
+    scene.input.on('pointerdown', function (pointer, time, lastFired) {
+        if (scene.player.entity.active === false)
+            return;
+        var bullet = null;
+		
+        if(scene.player.getWeapon()) {
+            bullet = scene.player.shoot(scene.player, sight)
+
+            if (bullet) {
+                scene.enemies.forEach((enemy) => {
+                    this.physics.add.collider(bullet.entity, scene.stage.wall_layer, () => bullet.entity.destroy());
+                    this.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
+                });
+            }
+        }
+    }, scene);
+
+}
+
+function update(scene) {
+	try {
+		scene.player.setRotation(Phaser.Math.Angle.Between(scene.player.entity.x, scene.player.entity.y, sight.entity.x, sight.entity.y));
+		scene.player.update();
+		
+		scene.weapons.forEach((weapon) => {
+			weapon.update();
+		});
+
+		if(scene.player.entity.active) {
+			sight.entity.x += scene.player.entity.body.deltaXFinal();
+			sight.entity.y += scene.player.entity.body.deltaYFinal();
+		}
+		
+		scene.enemies.forEach((enemy, index) => {
+			if(!enemy.isAlive()) {
+				scene.enemies.splice(index, 1);
+				
+				if(!scene.enemies.length) {
+					scene.stage_finished = true;
+					scene.end_area.setAlpha(0.35);
+				}
+			}
+			else
+				enemy.update(scene.player, scene.stage);
+		});
+	} catch(e) {
+		if(!scene.stopped)
+			throw e;
+	}
+}
+
 var config = {
     type: Phaser.AUTO,
     width: 1280,
@@ -9,122 +249,10 @@ var config = {
             debug: false
         }
     },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    },
+    scene: [Main_Menu, Stage1, Stage2, Stage3],
 	loaderAsync: false,
 	pixelArt: true,
 	backgroundColor: "#493743"
 };
 
 var game = new Phaser.Game(config);
-var current_stage;
-var enemies = [];
-var camera;
-var weapons = []
-
-function preload() {
-	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
-	this.load.image('spr_target', 'assets/spr_target.png');
-    this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
-    this.load.image('dude', 'assets/guy.png');
-    this.load.image('sight', 'assets/sight.png');
-    this.load.image('1911', 'assets/1911.png');
-	
-	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
-	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
-	this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
-	this.load.json('stage1_info', `src/stages/stage1_info.json`);
-	this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
-	this.load.json('stage2_info', `src/stages/stage2_info.json`);
-	this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
-	this.load.json('stage3_info', `src/stages/stage3_info.json`);
-	
-	this.load.image('terrain', 'assets/terrain.png');
-    this.load.image('tilemap', 'assets/tilemap.png');
-    
-    this.load.audio('cock', 'assets/sounds/cock.mp3')
-    this.load.audio('gunshot', 'assets/sounds/gunshot.mp3')
-}
-
-function loadStage(stage_name, scene) {
-	current_stage = new Stage(scene, stage_name);
-	player = new Player(scene, 'dude', current_stage.spawn_point.x, current_stage.spawn_point.y);
-	
-	current_stage.enemies.forEach((position) => {
-        enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
-    });
-
-    floorGun = new Item(scene, 650, 650, '1911', 'pistol')
-    floorGun.entity.setDisplaySize(24, 16);
-    floorGun.createOverlap(player)
-}
-
-function create() {
-    
-    loadStage('stage3', this)
-    
-    this.physics.add.collider(player.entity, current_stage.wall_layer);
-    enemies.forEach((enemy) => {
-        this.physics.add.collider(enemy.entity, player.entity, () => player.getHit());
-    });
-
-	sight = new Sight(this)
-
-	camera = this.cameras.main;
-	camera.setZoom(2);
-    camera.startFollow(player.entity)
-    this.weapons = weapons;
-
-    game.canvas.addEventListener('mousedown', function () {
-        game.input.mouse.requestPointerLock();
-    });
-	
-    this.input.on('pointermove', function (e) {
-        
-		if (this.input.mouse.locked)
-        {
-            sight.entity.x += e.movementX;
-            sight.entity.y += e.movementY;
-        }
-	}, this);
-	
-    this.input.on('pointerdown', function (pointer, time, lastFired) {
-        if (player.entity.active === false)
-            return;
-        var bullet = null;
-        if(player.getWeapon()) {
-            bullet = player.shoot(player, sight)
-
-            if (bullet) {
-                enemies.forEach((enemy) => {
-                    this.physics.add.collider(bullet.entity, current_stage.wall_layer, () => bullet.entity.destroy());
-                    this.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
-                });
-            }
-        }
-    }, this);
-
-}
-
-function update() {
-    this.weapons = weapons;
-    player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
-    player.update();
-
-    if(player.entity.active) {
-        sight.entity.x += player.entity.body.deltaXFinal();
-        sight.entity.y += player.entity.body.deltaYFinal();
-    }
-
-    this.weapons.forEach((weapon) => weapon.update())
-    
-	enemies.forEach((enemy, index) => {
-		if(!enemy.isAlive())
-			enemies.splice(index, 1);
-		else
-			enemy.update(player, current_stage);
-	});
-}
