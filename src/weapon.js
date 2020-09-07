@@ -5,7 +5,10 @@ class Weapon {
     }
 
     fire(shooter, target) {
-        var bullet = new Bullet({scene: this.game})
+        var gunshot = this.game.sound.add('gunshot')
+        gunshot.play()
+        var bullet = new Bullet(this.game)
+        // var bullet = new Bullet({scene: this.game})
         // var bullets = this.game.physics.add.group({ classType: Bullet, runChildUpdate: true });
 		this.bullets.add(bullet.entity)
 
@@ -13,7 +16,7 @@ class Weapon {
         {
             bullet.fire(shooter, target);
 
-            return bullet.entity
+            return bullet
             // this.game.physics.add.collider(test_enemy.entity, bullet.entity, () => test_enemy.getHit(test_enemy.entity));
         }
     }

@@ -1,5 +1,6 @@
 class Player {
-    weapon = null
+    weapon = null;
+    health = 100;
     constructor(game, image, x=0, y=0) {
         this.game = game
         this.entity = this.game.physics.add.sprite(x, y, image);
@@ -12,6 +13,14 @@ class Player {
             'left': Phaser.Input.Keyboard.KeyCodes.A,
             'right': Phaser.Input.Keyboard.KeyCodes.D
         });
+    }
+
+    getHit() {
+        console.log(this.health)
+        this.health--;
+        if(this.health <= 0) {
+            this.entity.destroy()
+        }
     }
 
     shoot(player, sight) {
@@ -29,23 +38,26 @@ class Player {
     }
 
     update() {
-		let velocityX = 0;
-		let velocityY = 0;
-		
-		if(this.moveKeys['right'].isDown)
+        if(this.entity.active)  {
+
+            let velocityX = 0;
+            let velocityY = 0;
+            
+            if(this.moveKeys['right'].isDown)
 			velocityX += this.velocity;
-		
-		if(this.moveKeys['left'].isDown)
+            
+            if(this.moveKeys['left'].isDown)
 			velocityX -= this.velocity;
-		
-		if(this.moveKeys['down'].isDown)
+            
+            if(this.moveKeys['down'].isDown)
 			velocityY += this.velocity;
-		
-		if(this.moveKeys['up'].isDown)
+            
+            if(this.moveKeys['up'].isDown)
 			velocityY -= this.velocity;
-		
-		this.entity.setVelocityY(velocityY);
-		this.entity.setVelocityX(velocityX);
+            
+            this.entity.setVelocityY(velocityY);
+            this.entity.setVelocityX(velocityX);
+        }
 	}
 
     setRotation(rotation) {

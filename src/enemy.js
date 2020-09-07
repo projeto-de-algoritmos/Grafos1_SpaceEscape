@@ -1,19 +1,19 @@
 class Enemy {
+	health = 8;
 	constructor(game, x = 0, y = 0, player = null, collision_layer = null) {
 		this.entity = game.physics.add.sprite(x, y, 'spr_enemy');
 		this.entity.setCollideWorldBounds(true);
 		this.target = player;
 		this.game = game;
 		this.collision_layer = collision_layer;
-		this.health = 5
 	}
 	
-	getHit(entity) {
+	getHit() {
 		this.health -= 1;
 		console.log('alive', this.health)
 		if(this.health <= 0 ) {
 			console.log('dead')
-			entity.destroy()
+			this.entity.destroy()
 		}
 	}
 	

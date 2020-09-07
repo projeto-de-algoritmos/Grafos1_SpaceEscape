@@ -28,10 +28,10 @@ function preload() {
 	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
 	this.load.image('spr_target', 'assets/spr_target.png');
     this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
-    this.load.image('dude', 'assets/dude.png');
+    this.load.image('dude', 'assets/guy.png');
     this.load.image('sight', 'assets/sight.png');
+    this.load.image('1911', 'assets/1911.png');
 	
-	//Dynamic loading is async and is pending a solution.
 	this.load.tilemapTiledJSON('test_stage', 'src/stages/test_stage.json');
 	this.load.json('test_stage_info', `src/stages/test_stage_info.json`);
 	this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
@@ -42,7 +42,9 @@ function preload() {
 	this.load.json('stage3_info', `src/stages/stage3_info.json`);
 	
 	this.load.image('terrain', 'assets/terrain.png');
-	this.load.image('tilemap', 'assets/tilemap.png');
+    this.load.image('tilemap', 'assets/tilemap.png');
+    
+    this.load.audio('gunshot', 'assets/sounds/gunshot.mp3')
 }
 
 function loadStage(stage_name, scene) {
@@ -50,31 +52,43 @@ function loadStage(stage_name, scene) {
 	player = new Player(scene, 'dude', current_stage.spawn_point.x, current_stage.spawn_point.y);
 	
 	current_stage.enemies.forEach((position) => {
-		enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
-	});
+        enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
+    });
 }
 
 function create() {
-	loadStage('stage3', this)
+    // loadStage('stage1', this)
+	
+    // sight = new Sight(this)
+    // camera = this.cameras.main;
+    
+    loadStage('stage3', this)
+    
+    this.physics.add.collider(player.entity, current_stage.wall_layer);
+    enemies.forEach((enemy) => {
+        this.physics.add.collider(enemy.entity, player.entity, () => player.getHit());
+    });
 
-    player.pickupWeapon(new Weapon(this))
+
+    // player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
 
 	camera = this.cameras.main;
 	camera.setZoom(2);
     camera.startFollow(player.entity)
-    
-	this.physics.add.collider(player.entity, current_stage.wall_layer);
-	
+    floorGun = new Item(this, 650, 650, '1911', player)
+    floorGun.entity.setDisplaySize(24, 16);
+    floorGun.createOverlap(player)
+
     game.canvas.addEventListener('mousedown', function () {
-		game.input.mouse.requestPointerLock();
+        game.input.mouse.requestPointerLock();
     });
 	
     this.input.on('pointermove', function (e) {
-		
+        
 		if (this.input.mouse.locked)
         {
-			sight.entity.x += e.movementX;
+            sight.entity.x += e.movementX;
             sight.entity.y += e.movementY;
         }
 	}, this);
@@ -85,14 +99,13 @@ function create() {
         var bullet = null;
         if(player.getWeapon()) {
             bullet = player.shoot(player, sight)
-        }
-			
-        if (bullet)
-        {
-            bullet.fire(player, sight);
-			enemies.forEach((enemy) => {
-				this.physics.add.collider(enemy.entity, bullet, () => enemy.getHit(enemy.entity));
-			});
+
+            if (bullet) {
+                enemies.forEach((enemy) => {
+                    this.physics.add.collider(bullet.entity, current_stage.wall_layer, () => bullet.entity.destroy());
+                    this.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
+                });
+            }
         }
     }, this);
 
@@ -102,8 +115,10 @@ function update() {
     player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
     player.update();
 
-	sight.entity.x += player.entity.body.deltaXFinal();
-	sight.entity.y += player.entity.body.deltaYFinal();
+    if(player.entity.active) {
+        sight.entity.x += player.entity.body.deltaXFinal();
+        sight.entity.y += player.entity.body.deltaYFinal();
+    }
     
 	enemies.forEach((enemy, index) => {
 		if(!enemy.isAlive())

@@ -56,11 +56,11 @@ class Graph {
 		var path = new Array()
 		var destination = vDestination;
 		destinationTreeEdge.forEach((node, index) => {
-			if(node == destination) {
+			if(node == destination && run) {
 				path.unshift(node)
 				destination = originTreeEdge[index];
 				if(destination == vRoot) {
-					return;
+					run = false;
 				}
 			}
 			
