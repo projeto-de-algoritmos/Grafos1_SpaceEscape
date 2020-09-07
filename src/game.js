@@ -1,6 +1,6 @@
-var Main_Menu = new Phaser.Class({
+var MainMenu = new Phaser.Class({
 	Extends: Phaser.Scene,
-	initialize: function Main_Menu() {
+	initialize: function MainMenu() {
 		Phaser.Scene.call(this, {key: 'main_menu'});
 	},
 	
@@ -200,10 +200,6 @@ function create(scene) {
 	scene.firing = false
     scene.input.on('pointerdown', function (pointer, time, lastFired) {
         scene.firing = true
-        // scene.firing = false
-        // do {
-        //     fire(scene)
-        // } while(firing)
     }, scene);
     
     scene.input.on('pointerup', function (pointer, time, lastFired) {
@@ -277,7 +273,7 @@ var config = {
             debug: false
         }
     },
-    scene: [Main_Menu, Stage1, Stage2, Stage3],
+    scene: [MainMenu, Stage1, Stage2, Stage3],
 	loaderAsync: false,
 	pixelArt: true,
 	backgroundColor: "#493743"
