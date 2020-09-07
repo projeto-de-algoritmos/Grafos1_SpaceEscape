@@ -12,6 +12,7 @@ class Stage {
 		let stage_json = game.cache.json.get(stage_name + '_info');
 		this.spawn_point = stage_json.spawn_point;
 		this.enemies = stage_json.enemies;
+		this.end_area = stage_json.end_area;
 		
 		this.generateFloorGraph();
 		this.wall_layer.setCollisionBetween(0, 999);

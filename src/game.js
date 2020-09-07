@@ -1,6 +1,6 @@
 var Main_Menu = new Phaser.Class({
 	Extends: Phaser.Scene,
-	initialize: function Stage1() {
+	initialize: function Main_Menu() {
 		Phaser.Scene.call(this, {key: 'main_menu'});
 	},
 	
@@ -14,9 +14,19 @@ var Main_Menu = new Phaser.Class({
 		this.load.image('terrain', 'assets/terrain.png');
 		this.load.image('tilemap', 'assets/tilemap.png');
 		this.load.image('main_menu_bg', 'assets/menu_background.png');
+		this.load.image('red', 'assets/red.png');
 		
 		this.load.audio('focus_move', 'assets/focus_move.mp3');
 		this.load.audio('confirm', 'assets/confirm.mp3');
+		
+		this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
+		this.load.json('stage1_info', `src/stages/stage1_info.json`);
+		
+		this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
+		this.load.json('stage2_info', `src/stages/stage2_info.json`);
+		
+		this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
+		this.load.json('stage3_info', `src/stages/stage3_info.json`);
 	},
 	
 	create: function() {
@@ -65,12 +75,13 @@ var Stage1 = new Phaser.Class({
 		Phaser.Scene.call(this, {key: 'st_1'});
 	},
 	
-	preload: function() {		
-		this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
-		this.load.json('stage1_info', `src/stages/stage1_info.json`);
+	preload: function() {	
+		//this.load.tilemapTiledJSON('stage1', 'src/stages/stage1.json');
+		//this.load.json('stage1_info', `src/stages/stage1_info.json`);
 	},
 	
-	create: function() {		
+	create: function() {
+		this.next_stage = 2;
 		loadStage('stage1', this);
 		create(this);
 	},
@@ -80,16 +91,17 @@ var Stage1 = new Phaser.Class({
 
 var Stage2 = new Phaser.Class({
 	Extends: Phaser.Scene,
-	initialize: function Stage1() {
+	initialize: function Stage2() {
 		Phaser.Scene.call(this, {key: 'st_2'});
 	},
 	
 	preload: function() {
-		this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
-		this.load.json('stage2_info', `src/stages/stage2_info.json`);
+		//this.load.tilemapTiledJSON('stage2', 'src/stages/stage2.json');
+		//this.load.json('stage2_info', `src/stages/stage2_info.json`);
 	},
 	
 	create: function() {
+		this.next_stage = 3;
 		loadStage('stage2', this);
 		create(this);
 	},
@@ -99,13 +111,13 @@ var Stage2 = new Phaser.Class({
 
 var Stage3 = new Phaser.Class({
 	Extends: Phaser.Scene,
-	initialize: function Stage1() {
+	initialize: function Stage3() {
 		Phaser.Scene.call(this, {key: 'st_3'});
 	},
 	
 	preload: function() {
-		this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
-		this.load.json('stage3_info', `src/stages/stage3_info.json`);
+		//this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
+		//this.load.json('stage3_info', `src/stages/stage3_info.json`);
 	},
 	
 	create: function() {
@@ -117,9 +129,22 @@ var Stage3 = new Phaser.Class({
 });
 
 function loadStage(stage_name, scene) {
+	scene.stage_finished = false;
 	scene.stage = new Stage(scene, stage_name);
 	scene.player = new Player(scene, 'dude', scene.stage.spawn_point.x, scene.stage.spawn_point.y);
 	scene.enemies = [];
+	console.log(scene.stage)
+	scene.end_area = scene.add.image(scene.stage.end_area.start.x, scene.stage.end_area.start.y, 'red').setOrigin(0).setDisplaySize(scene.stage.end_area.end.x - scene.stage.end_area.start.x, scene.stage.end_area.end.y - scene.stage.end_area.start.y).setAlpha(0);
+	
+	scene.physics.add.staticGroup(scene.end_area);
+	
+	scene.physics.add.overlap(scene.end_area, scene.player.entity, () => {
+		if(scene.stage_finished) {
+			game.scene.start(`st_${scene.next_stage}`);
+			game.scene.stop(scene.scene.key);
+			scene.stopped = true;
+		}
+	});
 	
 	scene.stage.enemies.forEach((position) => {
 		scene.enemies.push(new Enemy(scene, position.x, position.y, scene.player.entity, scene.stage.wall_layer));
@@ -169,18 +194,29 @@ function create(scene) {
 }
 
 function update(scene) {
-    scene.player.setRotation(Phaser.Math.Angle.Between(scene.player.entity.x, scene.player.entity.y, sight.entity.x, sight.entity.y));
-    scene.player.update();
+	try {
+		scene.player.setRotation(Phaser.Math.Angle.Between(scene.player.entity.x, scene.player.entity.y, sight.entity.x, sight.entity.y));
+		scene.player.update();
 
-	sight.entity.x += scene.player.entity.body.deltaXFinal();
-	sight.entity.y += scene.player.entity.body.deltaYFinal();
-    
-	scene.enemies.forEach((enemy, index) => {
-		if(!enemy.isAlive())
-			scene.enemies.splice(index, 1);
-		else
-			enemy.update(scene.player, scene.stage);
-	});
+		sight.entity.x += scene.player.entity.body.deltaXFinal();
+		sight.entity.y += scene.player.entity.body.deltaYFinal();
+		
+		scene.enemies.forEach((enemy, index) => {
+			if(!enemy.isAlive()) {
+				scene.enemies.splice(index, 1);
+				
+				if(!scene.enemies.length) {
+					scene.stage_finished = true;
+					scene.end_area.setAlpha(0.35);
+				}
+			}
+			else
+				enemy.update(scene.player, scene.stage);
+		});
+	} catch(e) {
+		if(!scene.stopped)
+			throw e;
+	}
 }
 
 var config = {
