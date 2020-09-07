@@ -26,8 +26,8 @@
 	},
 	"items": [
 		{
-			"name": "magnum",
-			"image": "1911",
+			"name": "mouser",
+			"image": "mouser",
 			"x": 640,
 			"y": 448
 		}

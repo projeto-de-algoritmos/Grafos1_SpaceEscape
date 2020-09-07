@@ -31,8 +31,8 @@
 	},
 	"items": [
 		{
-			"name": "rifle",
-			"image": "1911",
+			"name": "ak47",
+			"image": "ak47",
 			"x": 528,
 			"y": 188
 		}

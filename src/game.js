@@ -7,13 +7,23 @@ var Main_Menu = new Phaser.Class({
 	preload: function() {
 		this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
 		this.load.image('spr_target', 'assets/spr_target.png');
-		this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
 		this.load.image('dude', 'assets/guy.png');
-		this.load.image('sight', 'assets/sight.png');
-		this.load.image('1911', 'assets/1911.png');
+        this.load.image('sight', 'assets/sight.png');
+        
+		this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.image('9mm', 'assets/9mm.png');
+        this.load.image('mouser', 'assets/mouser.png');
+        this.load.image('ak47', 'assets/ak47.png');
+        this.load.image('m16', 'assets/m16.png');
+        this.load.image('mp5', 'assets/mp5.png');
 		
 		this.load.audio('cock', 'assets/sounds/cock.mp3');
-    this.load.audio('gunshot', 'assets/sounds/gunshot.mp3');
+        this.load.audio('gunshot', 'assets/sounds/gunshot.mp3');
+        this.load.audio('9mmSound', 'assets/sounds/9mmSound.mp3');
+        this.load.audio('12GSound', 'assets/sounds/12GSound.mp3');
+        this.load.audio('556Sound', 'assets/sounds/556Sound.mp3');
+        this.load.audio('762Sound', 'assets/sounds/762Sound.mp3');
+        this.load.audio('45Sound', 'assets/sounds/45Sound.mp3');
 			
 		this.load.image('terrain', 'assets/terrain.png');
 		this.load.image('tilemap', 'assets/tilemap.png');
@@ -162,8 +172,9 @@ function loadStage(stage_name, scene) {
 	});
 }
 
+
 function create(scene) {
-	scene.weapons = [];
+    scene.weapons = [];
 	sight = new Sight(scene)
 	
 
@@ -185,29 +196,46 @@ function create(scene) {
             sight.entity.x += e.movementX;
             sight.entity.y += e.movementY;
         }
-	}, scene);
-	
+    }, scene);
+	scene.firing = false
     scene.input.on('pointerdown', function (pointer, time, lastFired) {
+        scene.firing = true
+        // scene.firing = false
+        // do {
+        //     fire(scene)
+        // } while(firing)
+    }, scene);
+    
+    scene.input.on('pointerup', function (pointer, time, lastFired) {
+        scene.firing = false
+    }, scene);
+    
+}
+
+function update(scene) {
+    
+    if(scene.firing){
         if (scene.player.entity.active === false)
             return;
         var bullet = null;
-		
+        
         if(scene.player.getWeapon()) {
             bullet = scene.player.shoot(scene.player, sight)
 
             if (bullet) {
                 scene.enemies.forEach((enemy) => {
-                    this.physics.add.collider(bullet.entity, scene.stage.wall_layer, () => bullet.entity.destroy());
-                    this.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
+                    scene.physics.add.collider(bullet.entity, scene.stage.wall_layer, () => bullet.entity.destroy());
+                    scene.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
                 });
             }
         }
-    }, scene);
-
-}
-
-function update(scene) {
-	try {
+        if(scene.player.weapon) {
+            if(!scene.player.weapon.automatic) {
+                scene.firing = false;
+            }
+        }
+    }
+    try {
 		scene.player.setRotation(Phaser.Math.Angle.Between(scene.player.entity.x, scene.player.entity.y, sight.entity.x, sight.entity.y));
 		scene.player.update();
 		
