@@ -1,23 +1,42 @@
 class Weapon {
-    constructor(game) {
+    constructor(game, weaponName) {
         this.game = game
         this.bullets = game.physics.add.group({ classType: Bullet, runChildUpdate: true });
+        this.name = weaponName;
+        this.ready = true;
+        game.weapons.push(this);
+        this.counter = 10;
+        switch(weaponName) {
+            case 'pistol':
+                console.log(weaponName)
+                this.damage = 5;
+                this.fireLag = 20;
+                this.counter = 10;
+            break;
+        }
     }
 
     fire(shooter, target) {
-        var gunshot = this.game.sound.add('gunshot')
-        gunshot.play()
-        var bullet = new Bullet(this.game)
-        // var bullet = new Bullet({scene: this.game})
-        // var bullets = this.game.physics.add.group({ classType: Bullet, runChildUpdate: true });
-		this.bullets.add(bullet.entity)
+        if(this.ready) {
+            var gunshot = this.game.sound.add('gunshot')
+            gunshot.play()
+            var bullet = new Bullet(this.game, this.damage)
+            this.bullets.add(bullet.entity)
+            this.ready = false;
+            this.counter = 0;
+            
+            if (bullet.entity) {
+                bullet.fire(shooter, target);
+                
+                return bullet
+            }
+        }
+    }
 
-        if (bullet.entity)
-        {
-            bullet.fire(shooter, target);
-
-            return bullet
-            // this.game.physics.add.collider(test_enemy.entity, bullet.entity, () => test_enemy.getHit(test_enemy.entity));
+    update() {
+        this.counter += 1;
+        if(this.counter >= this.fireLag) {
+            this.ready = true;
         }
     }
 }

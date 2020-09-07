@@ -1,10 +1,11 @@
 class Bullet {
-    constructor(game) {
+    constructor(game, damage) {
         this.game = game;
         this.entity = game.physics.add.image(0, 0, 'bullet').setDisplaySize(16, 8);
         this.entity.born = 0;
         this.entity.direction = 0;
         this.entity.speed = 1
+        this.damage = damage;
     }
     
     fire(shooter, target) {
@@ -26,7 +27,7 @@ class Bullet {
     }
 
     hitCallBack(target) {
-        target.getHit()
+        target.getHit(this.damage)
         this.entity.destroy()
     }
 

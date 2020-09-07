@@ -23,6 +23,7 @@ var game = new Phaser.Game(config);
 var current_stage;
 var enemies = [];
 var camera;
+var weapons = []
 
 function preload() {
 	this.load.spritesheet('spr_enemy', 'assets/spr_enemy.png', { frameWidth: 32, frameHeight: 32 });
@@ -44,6 +45,7 @@ function preload() {
 	this.load.image('terrain', 'assets/terrain.png');
     this.load.image('tilemap', 'assets/tilemap.png');
     
+    this.load.audio('cock', 'assets/sounds/cock.mp3')
     this.load.audio('gunshot', 'assets/sounds/gunshot.mp3')
 }
 
@@ -54,13 +56,13 @@ function loadStage(stage_name, scene) {
 	current_stage.enemies.forEach((position) => {
         enemies.push(new Enemy(scene, position.x, position.y, player.entity, current_stage.wall_layer));
     });
+
+    floorGun = new Item(scene, 650, 650, '1911', 'pistol')
+    floorGun.entity.setDisplaySize(24, 16);
+    floorGun.createOverlap(player)
 }
 
 function create() {
-    // loadStage('stage1', this)
-	
-    // sight = new Sight(this)
-    // camera = this.cameras.main;
     
     loadStage('stage3', this)
     
@@ -69,16 +71,12 @@ function create() {
         this.physics.add.collider(enemy.entity, player.entity, () => player.getHit());
     });
 
-
-    // player.pickupWeapon(new Weapon(this))
 	sight = new Sight(this)
 
 	camera = this.cameras.main;
 	camera.setZoom(2);
     camera.startFollow(player.entity)
-    floorGun = new Item(this, 650, 650, '1911', player)
-    floorGun.entity.setDisplaySize(24, 16);
-    floorGun.createOverlap(player)
+    this.weapons = weapons;
 
     game.canvas.addEventListener('mousedown', function () {
         game.input.mouse.requestPointerLock();
@@ -112,6 +110,7 @@ function create() {
 }
 
 function update() {
+    this.weapons = weapons;
     player.setRotation(Phaser.Math.Angle.Between(player.entity.x, player.entity.y, sight.entity.x, sight.entity.y));
     player.update();
 
@@ -119,6 +118,8 @@ function update() {
         sight.entity.x += player.entity.body.deltaXFinal();
         sight.entity.y += player.entity.body.deltaYFinal();
     }
+
+    this.weapons.forEach((weapon) => weapon.update())
     
 	enemies.forEach((enemy, index) => {
 		if(!enemy.isAlive())

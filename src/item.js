@@ -1,15 +1,20 @@
 class Item {
     // entity = null
-    constructor(game, x, y, image) {
+    constructor(game, x, y, image, itemName) {
         this.game = game
         this.entity = game.physics.add.image(x, y, image);
+        this.name = itemName
     }
 
-createOverlap(player, weapon) {
-    this.game.physics.add.overlap(this.entity, player.entity, () => {
-        player.pickupWeapon(new Weapon(this.game));
-        this.entity.destroy()
-    })
+createOverlap(player) {
+    switch(this.name) {
+        default:
+            this.game.physics.add.overlap(this.entity, player.entity, () => {
+                player.pickupWeapon(new Weapon(this.game, this.name));
+                this.entity.destroy()
+            })
+        break;
+    }
 }
 
     

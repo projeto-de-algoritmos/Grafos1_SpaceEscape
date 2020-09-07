@@ -34,6 +34,7 @@ class Player {
     }
 
     pickupWeapon(weapon) {
+        this.game.sound.add('cock').play()
         this.weapon = weapon;
     }
 
