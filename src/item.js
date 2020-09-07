@@ -4,6 +4,7 @@ class Item {
         this.game = game
         this.entity = game.physics.add.image(x, y, image);
         this.name = itemName
+		this.entity.setDisplaySize(24, 16)
     }
 
 createOverlap(player) {

@@ -12,7 +12,12 @@ class Weapon {
                 this.damage = 5;
                 this.fireLag = 20;
                 this.counter = 10;
-            break;
+				break;
+			case 'magnum':
+				this.damage = 10;
+                this.fireLag = 20;
+                this.counter = 10;
+				break
         }
     }
 
