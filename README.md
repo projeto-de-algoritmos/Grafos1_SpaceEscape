@@ -14,12 +14,17 @@ Zombie Escape consiste em um jogo em que o jogador deve alcançar o fim do está
 [Clique aqui](https://projeto-de-algoritmos.github.io/Grafos1_ZombieEscape/) para jogar.
 
 ## Screenshots
-Adicione 3 ou mais screenshots do projeto em funcionamento.
+![](screenshot1.png)
+![](screenshot2.png)
+![](screenshot3.png)
+
 
 ## Instalação 
 **Linguagem**: Javascript<br>
 **Framework**: Phaser<br>
-* Para rodar localmente, navegue até o diretório raiz do projeto e rode o comando:
+### Para rodar localmente:
+* Baixe ou clone este repositório
+* Navegue até o diretório raiz do projeto e rode o comando:
 ```
 $ python -m http.server 8080
 ```
