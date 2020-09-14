@@ -1,7 +1,7 @@
 class Bullet {
-    constructor(game, damage, penetration) {
+    constructor(game, damage, penetration, calliber) {
         this.game = game;
-        this.entity = game.physics.add.image(0, 0, 'bullet').setDisplaySize(16, 8);
+        this.entity = game.physics.add.image(0, 0, calliber).setDisplaySize(4, 4);
         this.entity.born = 0;
         this.entity.direction = 0;
         this.entity.speed = 1
@@ -9,20 +9,21 @@ class Bullet {
 		this.penetration = penetration
     }
     
-    fire(shooter, target) {
+    fire(shooter, target, rotationBias = 0) {
         this.entity.setPosition(shooter.entity.x, shooter.entity.y); // Initial position
-        this.entity.direction = Math.atan((target.entity.x - this.entity.x) / (target.entity.y - this.entity.y));
+        // this.entity.direction = Math.atan((target.entity.x - this.entity.x) / (target.entity.y - this.entity.y)) + rotationBias;
         
-        if (target.entity.y >= this.entity.y) {
-            this.entity.body.velocity.x = this.entity.speed * Math.sin(this.entity.direction);
-            this.entity.body.velocity.y = this.entity.speed * Math.cos(this.entity.direction);
-        }
-        else {
-            this.entity.body.velocity.x = - this.entity.speed * Math.sin(this.entity.direction);
-            this.entity.body.velocity.y = - this.entity.speed * Math.cos(this.entity.direction);
-        }
+        // if (target.entity.y >= this.entity.y) {
+        //     this.entity.body.velocity.x = this.entity.speed * Math.sin(this.entity.direction);
+        //     this.entity.body.velocity.y = this.entity.speed * Math.cos(this.entity.direction);
+        // }
+        // else {
+        //     this.entity.body.velocity.x = - this.entity.speed * Math.sin(this.entity.direction);
+        //     this.entity.body.velocity.y = - this.entity.speed * Math.cos(this.entity.direction);
+        // }
         
-        this.entity.rotation = shooter.entity.rotation;
+        this.entity.rotation = shooter.entity.rotation + rotationBias;
+        console.log(this.entity.rotation)
         this.game.physics.velocityFromRotation(this.entity.rotation, 1200, this.entity.body.velocity);
         this.entity.born = 0;
     }

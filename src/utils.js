@@ -65,6 +65,6 @@ class Graph {
 			}
 			
 		})
-		return path[0];
+		return path;
 	}
 }

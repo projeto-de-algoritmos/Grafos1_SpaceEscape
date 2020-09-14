@@ -1,0 +1,103 @@
+{
+	"spawn_point": {
+		"x": 16,
+		"y": 32
+	},
+	"enemies": [
+		{	
+			"followDistance": 15,
+			"x": 512,
+			"y": 48
+		},
+		{
+			"followDistance": 15,
+			"x": 464,
+			"y": 192
+		},
+		{
+			"followDistance": 15,
+			"x": 208,
+			"y": 192
+		},
+		{
+			"followDistance": 15,
+			"x": 208,
+			"y": 320
+		},
+		{
+			"followDistance": 15,
+			"x": 464,
+			"y": 320
+		},
+		{
+			"followDistance": 15,
+			"x": 208,
+			"y": 448
+		},
+		{
+			"followDistance": 15,
+			"x": 464,
+			"y": 448
+		},
+		{
+			"followDistance": 15,
+			"x": 144,
+			"y": 576
+		},
+		{
+			"followDistance": 15,
+			"x": 1040,
+			"y": 464
+		},
+		{
+			"followDistance": 15,
+			"x": 1104,
+			"y": 464
+		},
+		{
+			"followDistance": 15,
+			"x": 1104,
+			"y": 576
+		},
+		{
+			"followDistance": 15,
+			"x": 1040,
+			"y": 576
+		},
+		{
+			"followDistance": 15,
+			"x": 1040,
+			"y": 704
+		},
+		{
+			"followDistance": 15,
+			"x": 1040,
+			"y": 704
+		}
+		
+	],
+	"end_area": {
+		"start": {
+			"x": 1568,
+			"y": 544
+		},
+		"end": {
+			"x": 1584,
+			"y": 592
+		}
+	},
+	"items": [
+		{
+			"name": "mouser",
+			"image": "mouser",
+			"x": 112,
+			"y": 48
+		},
+		{
+			"name": "12",
+			"image": "12",
+			"x": 224,
+			"y": 576
+		}
+	]
+}

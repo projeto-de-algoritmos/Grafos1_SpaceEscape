@@ -11,11 +11,13 @@ var MainMenu = new Phaser.Class({
         this.load.image('sight', 'assets/sight.png');
         
 		this.load.image('bullet', 'assets/bullet.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.image('9mm', 'assets/9mm.png');
+		this.load.image('9mm', 'assets/9mm.png');
+		
         this.load.image('mouser', 'assets/mouser.png');
         this.load.image('ak47', 'assets/ak47.png');
         this.load.image('m16', 'assets/m16.png');
-        this.load.image('mp5', 'assets/mp5.png');
+		this.load.image('mp5', 'assets/mp5.png');
+		this.load.image('12', 'assets/12.png');
 		
 		this.load.audio('cock', 'assets/sounds/cock.mp3');
         this.load.audio('gunshot', 'assets/sounds/gunshot.mp3');
@@ -23,7 +25,8 @@ var MainMenu = new Phaser.Class({
         this.load.audio('12GSound', 'assets/sounds/12GSound.mp3');
         this.load.audio('556Sound', 'assets/sounds/556Sound.mp3');
         this.load.audio('762Sound', 'assets/sounds/762Sound.mp3');
-        this.load.audio('45Sound', 'assets/sounds/45Sound.mp3');
+		this.load.audio('45Sound', 'assets/sounds/45Sound.mp3');
+		this.load.audio('12Sound', 'assets/sounds/12Sound.mp3');
 			
 		this.load.image('terrain', 'assets/terrain.png');
 		this.load.image('tilemap', 'assets/tilemap.png');
@@ -41,6 +44,9 @@ var MainMenu = new Phaser.Class({
 		
 		this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
 		this.load.json('stage3_info', `src/stages/stage3_info.json`);
+
+		this.load.tilemapTiledJSON('stage4', 'src/stages/stage4.json');
+		this.load.json('stage4_info', `src/stages/stage4_info.json`);
 	},
 	
 	create: function() {
@@ -64,7 +70,7 @@ var MainMenu = new Phaser.Class({
 		
 		start_game.on("pointerup", () => {
 			conf.play();
-			this.scene.start('st_1');
+			this.scene.start('st_4');
 			this.scene.stop('main_menu');
 		});
 		
@@ -135,7 +141,27 @@ var Stage3 = new Phaser.Class({
 	},
 	
 	create: function() {
+		this.next_stage = 4;
 		loadStage('stage3', this);
+		create(this);
+	},
+	
+	update: function() {update(this)}
+});
+
+var Stage4 = new Phaser.Class({
+	Extends: Phaser.Scene,
+	initialize: function Stage4() {
+		Phaser.Scene.call(this, {key: 'st_4'});
+	},
+	
+	preload: function() {
+		//this.load.tilemapTiledJSON('stage3', 'src/stages/stage3.json');
+		//this.load.json('stage3_info', `src/stages/stage3_info.json`);
+	},
+	
+	create: function() {
+		loadStage('stage4', this);
 		create(this);
 	},
 	
@@ -162,7 +188,7 @@ function loadStage(stage_name, scene) {
 	});
 	
 	scene.stage.enemies.forEach((position) => {
-		scene.enemies.push(new Enemy(scene, position.x, position.y, scene.player.entity, scene.stage.wall_layer));
+		scene.enemies.push(new Enemy(scene, position.x, position.y, position.followDistance, scene.player.entity, scene.stage.wall_layer));
 	});
 	
 	scene.stage.items.forEach((item) => {
@@ -179,7 +205,7 @@ function create(scene) {
 	
 
 	camera = scene.cameras.main;
-	camera.setZoom(2);
+	camera.setZoom(3);
     camera.startFollow(scene.player.entity)
     
 	scene.physics.add.collider(scene.player.entity, scene.stage.wall_layer);
@@ -213,16 +239,19 @@ function update(scene) {
     if(scene.firing){
         if (scene.player.entity.active === false)
             return;
-        var bullet = null;
+        var bullets = null;
         
         if(scene.player.getWeapon()) {
-            bullet = scene.player.shoot(scene.player, sight)
+            bullets = scene.player.shoot(scene.player, sight)
 
-            if (bullet) {
-                scene.enemies.forEach((enemy) => {
-                    scene.physics.add.collider(bullet.entity, scene.stage.wall_layer, () => bullet.entity.destroy());
-                    scene.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
-                });
+            if (bullets) {
+				bullets.forEach((bullet) => {
+					console.log('asda')
+					scene.enemies.forEach((enemy) => {
+						scene.physics.add.collider(bullet.entity, scene.stage.wall_layer, () => bullet.entity.destroy());
+						scene.physics.add.overlap(enemy.entity, bullet.entity, () => bullet.hitCallBack(enemy));
+					});
+				});
             }
         }
         if(scene.player.weapon) {
@@ -264,8 +293,8 @@ function update(scene) {
 
 var config = {
     type: Phaser.AUTO,
-    width: 1280,
-    height: 720,
+    width: 1600,
+    height: 1600,
     physics: {
         default: 'arcade',
         arcade: {
@@ -273,7 +302,7 @@ var config = {
             debug: false
         }
     },
-    scene: [MainMenu, Stage1, Stage2, Stage3],
+    scene: [MainMenu, Stage1, Stage2, Stage3, Stage4],
 	loaderAsync: false,
 	pixelArt: true,
 	backgroundColor: "#493743"
