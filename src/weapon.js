@@ -5,30 +5,26 @@ class Weapon {
         this.name = weaponName;
         this.ready = true;
         game.weapons.push(this);
-        this.counter = 10;
         switch(weaponName) {
             case 'mp5':
                 this.sound = '9mmSound';
                 this.automatic = true;
-				this.damage = 5;
-                this.fireLag = 5;
-                this.counter = 10;
+				this.damage = 20;
+                this.fireLag = 100;
                 this.penetration = 0;
                 this.calliber = '9mm'
                 break;
             case '12':
                 this.sound = '12Sound';
 				this.damage = 20;
-                this.fireLag = 50;
-                this.counter = 10;
+                this.fireLag = 500;
                 this.penetration = 0;
                 this.calliber = '9mm'
                 break;
 			case 'mouser':
                 this.sound = '9mmSound';
 				this.damage = 20;
-                this.fireLag = 10;
-                this.counter = 10;
+                this.fireLag = 100;
                 this.penetration = 0;
                 this.calliber = '9mm'
 				break;
@@ -36,12 +32,12 @@ class Weapon {
                 this.sound = '762Sound';
                 this.automatic = true;
 				this.damage = 50;
-				this.fireLag = 6;
-				this.counter = 5;
-                this.penetration = 5;
+				this.fireLag = 200;
+                this.penetration = 2;
                 this.calliber = 'bullet'
 				break;
         }
+        this.lastFired = Date.now() - this.fireLag - 1
     }
 
     fire(shooter, target) {
@@ -56,7 +52,7 @@ class Weapon {
                     bullet.fire(shooter, target);
                     
                     this.ready = false;
-                    this.counter = 0;
+                    this.lastFired = Date.now()
                     return [bullet]
                 }
             } else {
@@ -72,15 +68,14 @@ class Weapon {
                     
                 }
                 this.ready = false;
-                this.counter = 0;
+                this.lastFired = Date.now()
                     return bullets;
             }
         }
     }
 
     update() {
-        this.counter += 1;
-        if(this.counter >= this.fireLag) {
+        if(Date.now() - this.lastFired >= this.fireLag) {
             this.ready = true;
         }
     }

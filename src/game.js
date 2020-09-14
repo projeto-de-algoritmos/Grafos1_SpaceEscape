@@ -70,7 +70,7 @@ var MainMenu = new Phaser.Class({
 		
 		start_game.on("pointerup", () => {
 			conf.play();
-			this.scene.start('st_4');
+			this.scene.start('st_1');
 			this.scene.stop('main_menu');
 		});
 		
@@ -171,11 +171,11 @@ var Stage4 = new Phaser.Class({
 function loadStage(stage_name, scene) {
 	scene.stage_finished = false;
 	scene.stage = new Stage(scene, stage_name);
-	scene.player = new Player(scene, 'dude', scene.stage.spawn_point.x, scene.stage.spawn_point.y);
+	scene.player = new Player(scene, 'dude', scene.stage.spawn_point.x * 16, scene.stage.spawn_point.y * 16);
 	scene.enemies = [];
 	scene.items = [];
 	console.log(scene.stage)
-	scene.end_area = scene.add.image(scene.stage.end_area.start.x, scene.stage.end_area.start.y, 'red').setOrigin(0).setDisplaySize(scene.stage.end_area.end.x - scene.stage.end_area.start.x, scene.stage.end_area.end.y - scene.stage.end_area.start.y).setAlpha(0);
+	scene.end_area = scene.add.image(scene.stage.end_area.start.x * 16, scene.stage.end_area.start.y * 16, 'red').setOrigin(0).setDisplaySize((scene.stage.end_area.end.x * 16) - (scene.stage.end_area.start.x * 16), (scene.stage.end_area.end.y * 16) - (scene.stage.end_area.start.y * 16)).setAlpha(0);
 	
 	scene.physics.add.staticGroup(scene.end_area);
 	
@@ -188,11 +188,11 @@ function loadStage(stage_name, scene) {
 	});
 	
 	scene.stage.enemies.forEach((position) => {
-		scene.enemies.push(new Enemy(scene, position.x, position.y, position.followDistance, scene.player.entity, scene.stage.wall_layer));
+		scene.enemies.push(new Enemy(scene, position.x * 16, position.y * 16,  position.followDistance, scene.player.entity, scene.stage.wall_layer));
 	});
 	
 	scene.stage.items.forEach((item) => {
-		let it = new Item(scene, item.x, item.y, item.image, item.name);
+		let it = new Item(scene, item.x * 16, item.y * 16, item.image, item.name);
 		it.createOverlap(scene.player);
 		scene.items.push(it);
 	});

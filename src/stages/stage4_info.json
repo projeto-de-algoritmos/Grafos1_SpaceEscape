@@ -1,103 +1,103 @@
 {
 	"spawn_point": {
-		"x": 16,
-		"y": 32
+		"x": 1,
+		"y": 2
 	},
 	"enemies": [
 		{	
 			"followDistance": 15,
-			"x": 512,
-			"y": 48
+			"x": 32,
+			"y": 3
 		},
 		{
 			"followDistance": 15,
-			"x": 464,
-			"y": 192
+			"x": 29,
+			"y": 12
 		},
 		{
 			"followDistance": 15,
-			"x": 208,
-			"y": 192
+			"x": 13,
+			"y": 12
 		},
 		{
 			"followDistance": 15,
-			"x": 208,
-			"y": 320
+			"x": 13,
+			"y": 20
 		},
 		{
 			"followDistance": 15,
-			"x": 464,
-			"y": 320
+			"x": 29,
+			"y": 20
 		},
 		{
 			"followDistance": 15,
-			"x": 208,
-			"y": 448
+			"x": 13,
+			"y": 28
 		},
 		{
 			"followDistance": 15,
-			"x": 464,
-			"y": 448
+			"x": 29,
+			"y": 28
 		},
 		{
 			"followDistance": 15,
-			"x": 144,
-			"y": 576
+			"x": 9,
+			"y": 36
 		},
 		{
 			"followDistance": 15,
-			"x": 1040,
-			"y": 464
+			"x": 65,
+			"y": 29
 		},
 		{
 			"followDistance": 15,
-			"x": 1104,
-			"y": 464
+			"x": 69,
+			"y": 29
 		},
 		{
 			"followDistance": 15,
-			"x": 1104,
-			"y": 576
+			"x": 69,
+			"y": 36
 		},
 		{
 			"followDistance": 15,
-			"x": 1040,
-			"y": 576
+			"x": 65,
+			"y": 36
 		},
 		{
 			"followDistance": 15,
-			"x": 1040,
-			"y": 704
+			"x": 65,
+			"y": 44
 		},
 		{
 			"followDistance": 15,
-			"x": 1040,
-			"y": 704
+			"x": 65,
+			"y": 44
 		}
 		
 	],
 	"end_area": {
 		"start": {
-			"x": 1568,
-			"y": 544
+			"x": 98,
+			"y": 16
 		},
 		"end": {
-			"x": 1584,
-			"y": 592
+			"x": 99,
+			"y": 37
 		}
 	},
 	"items": [
 		{
 			"name": "mouser",
 			"image": "mouser",
-			"x": 112,
-			"y": 48
+			"x": 9,
+			"y": 3
 		},
 		{
 			"name": "12",
 			"image": "12",
-			"x": 224,
-			"y": 576
+			"x": 13,
+			"y": 36
 		}
 	]
 }
